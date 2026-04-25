@@ -42,9 +42,7 @@ class Parser:
     def _expect(self, kind: TokenKind) -> Token:
         tok = self._peek()
         if tok.kind != kind:
-            raise ParseError(
-                f"Expected {kind.name} but got {tok.kind.name} ({tok.value!r}) at line {tok.line}"
-            )
+            raise ParseError(f"Expected {kind.name} but got {tok.kind.name} ({tok.value!r}) at line {tok.line}")
         return self._advance()
 
     def _skip_newlines(self) -> None:
