@@ -206,6 +206,9 @@ tempCodeRunnerFile.py
 # Ruff stuff:
 .ruff_cache/
 
+# Node.js (Prisma CLI — dev tooling only)
+node_modules/
+
 # PyPI configuration file
 .pypirc
 

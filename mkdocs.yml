@@ -1,0 +1,57 @@
+site_name: Prismaa
+site_description: A production-grade Python Prisma client — no Node.js, no Rust binary.
+repo_url: https://github.com/laszlosragner/prismaa
+repo_name: laszlosragner/prismaa
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - content.code.annotate
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_source: true
+            show_root_heading: true
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Prisma CLI Setup: prisma-setup.md
+  - Schema Reference: schema-reference.md
+  - API:
+      - find_many: api/find-many.md
+      - find_unique: api/find-unique.md
+      - create: api/create.md
+      - update: api/update.md
+      - delete: api/delete.md
+  - Contributing: contributing.md
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - tables
+  - attr_list
