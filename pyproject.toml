@@ -9,7 +9,7 @@ description = "A production-grade Python Prisma client"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { file = "LICENSE" }
-authors = [{ name = "Laszlo Sragner", email = "laszlo@hypergolic.co.uk" }]
+authors = [{ name = "Laszlo Sragner", email = "5104441+xLaszlo@users.noreply.github.com" }]
 keywords = ["prisma", "orm", "database", "async", "sqlalchemy"]
 classifiers = [
     "Development Status :: 3 - Alpha",
