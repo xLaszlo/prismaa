@@ -34,10 +34,10 @@ dependencies = [
 prismaa = "prismaa.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/laszlosragner/prismaa"
-Documentation = "https://laszlosragner.github.io/prismaa"
-Repository = "https://github.com/laszlosragner/prismaa"
-Issues = "https://github.com/laszlosragner/prismaa/issues"
+Homepage = "https://github.com/xLaszlo/prismaa"
+Documentation = "https://xLaszlo.github.io/prismaa"
+Repository = "https://github.com/xLaszlo/prismaa"
+Issues = "https://github.com/xLaszlo/prismaa/issues"
 
 [dependency-groups]
 dev = [
