@@ -4,7 +4,7 @@ from pathlib import Path
 from prismaa.parser import parse
 from prismaa.parser.ast import FunctionCall
 
-EXAMPLE_SCHEMA = (Path(__file__).parent.parent.parent / "example" / "schema.prisma").read_text()
+EXAMPLE_SCHEMA = (Path(__file__).parent.parent / "fixtures" / "schema.prisma").read_text()
 
 
 class TestGeneratorBlock(unittest.TestCase):
