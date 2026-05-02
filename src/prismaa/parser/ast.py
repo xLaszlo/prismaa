@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+_PRISMA_SCALARS = frozenset({"String", "Boolean", "Int", "BigInt", "Float", "Decimal", "DateTime", "Json", "Bytes"})
+
 
 @dataclass
 class FunctionCall:
@@ -64,7 +66,9 @@ class Field:
 
     @property
     def is_relation(self) -> bool:
-        return any(a.name == "relation" for a in self.attributes)
+        if any(a.name == "relation" for a in self.attributes):
+            return True
+        return self.type not in _PRISMA_SCALARS and self.type != "Unsupported"
 
     @property
     def column_name(self) -> str:
