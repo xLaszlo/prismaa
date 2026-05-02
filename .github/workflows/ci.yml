@@ -44,6 +44,9 @@ jobs:
       - name: Install Python dependencies
         run: uv sync --group dev
 
+      - name: Generate test client
+        run: uv run prismaa generate --schema tests/fixtures/schema.prisma --output tests/prisma
+
       - name: Run tests
         run: uv run pytest --cov=prismaa --cov-report=xml
 
