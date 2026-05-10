@@ -1,47 +1,12 @@
 """Integration tests for scalar type round-trips."""
 
 import datetime
-import subprocess
-import tempfile
-import unittest
 from decimal import Decimal
-from pathlib import Path
 
-from prisma import Prisma
-
-_SCHEMA_PATH = Path(__file__).parent.parent / "fixtures" / "schema.prisma"
+from .prisma_test_case import PrismaTestCase
 
 
-class TestScalarTypes(unittest.IsolatedAsyncioTestCase):
-    _db_url: str
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        tmp = tempfile.mkdtemp()
-        db_path = Path(tmp) / "test.db"
-        subprocess.run(
-            [
-                "npx",
-                "--yes",
-                "prisma",
-                "db",
-                "push",
-                "--schema",
-                str(_SCHEMA_PATH),
-                f"--url=file:{db_path}",
-                "--accept-data-loss",
-            ],
-            check=True,
-        )
-        cls._db_url = f"sqlite+aiosqlite:///{db_path}"
-
-    async def asyncSetUp(self) -> None:
-        self.db = Prisma()
-        await self.db.connect(self._db_url)
-
-    async def asyncTearDown(self) -> None:
-        await self.db.disconnect()
-
+class TestScalarTypes(PrismaTestCase):
     # ------------------------------------------------------------------
     # Bytes
     # ------------------------------------------------------------------

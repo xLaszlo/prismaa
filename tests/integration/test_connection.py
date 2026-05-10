@@ -1,37 +1,17 @@
 """Integration tests for Prisma client connection lifecycle."""
 
-import subprocess
-import tempfile
-import unittest
-from pathlib import Path
-
 from prisma import Prisma
 
-_SCHEMA_PATH = Path(__file__).parent.parent / "fixtures" / "schema.prisma"
+from .prisma_test_case import PrismaTestCase
 
 
-class TestConnectionLifecycle(unittest.IsolatedAsyncioTestCase):
-    _db_url: str
+class TestConnectionLifecycle(PrismaTestCase):
+    # Each test manages its own Prisma instance; disable the default connect/disconnect.
+    async def asyncSetUp(self) -> None:
+        pass
 
-    @classmethod
-    def setUpClass(cls) -> None:
-        tmp = tempfile.mkdtemp()
-        db_path = Path(tmp) / "test.db"
-        subprocess.run(
-            [
-                "npx",
-                "--yes",
-                "prisma",
-                "db",
-                "push",
-                "--schema",
-                str(_SCHEMA_PATH),
-                f"--url=file:{db_path}",
-                "--accept-data-loss",
-            ],
-            check=True,
-        )
-        cls._db_url = f"sqlite+aiosqlite:///{db_path}"
+    async def asyncTearDown(self) -> None:
+        pass
 
     async def test_explicit_connect_and_disconnect(self) -> None:
         db = Prisma()
