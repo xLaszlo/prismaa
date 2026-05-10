@@ -50,6 +50,7 @@ This plan covers test coverage needed for drop-in compatibility with the legacy 
 - **Database targets**: SQLite (primary) and PostgreSQL — additional databases available via SQLAlchemy driver URL
 - **Async-first** — sync wrapper is a later concern
 - **Test style** — all new integration tests use `unittest.IsolatedAsyncioTestCase` with `self.assertXXX` assertions; DB is created once per class in `setUpClass`, client is connected/disconnected in `asyncSetUp`/`asyncTearDown`
+- **Running tests** — always use `uv run --locked pytest ...`; the `--locked` flag prevents uv from silently updating the venv. Same applies to `uv sync` → `uv sync --locked`. All CI workflow steps follow this convention.
 
 ---
 

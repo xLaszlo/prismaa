@@ -34,6 +34,13 @@ class AsyncConnectionManager:
             result: CursorResult = await conn.execute(stmt)
             return result.mappings().all() if result.returns_rows else []
 
+    async def execute_dml(self, stmt: ClauseElement, data: Any = None) -> int:
+        if self._engine is None:
+            raise RuntimeError("Not connected — call connect() first")
+        async with self._engine.begin() as conn:
+            result: CursorResult = await conn.execute(stmt, data) if data is not None else await conn.execute(stmt)
+            return result.rowcount
+
     async def __aenter__(self) -> AsyncConnectionManager:
         return self
 

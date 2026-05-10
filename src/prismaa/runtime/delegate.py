@@ -176,9 +176,7 @@ class AsyncModelDelegate(Generic[T]):
 
             stmt = sqlite_insert(self._table).prefix_with("OR IGNORE")
         try:
-            async with self._conn._engine.begin() as conn:  # type: ignore[union-attr]
-                result = await conn.execute(stmt, rows_clean)
-                return result.rowcount
+            return await self._conn.execute_dml(stmt, rows_clean)
         except Exception as e:
             if "UNIQUE" in str(e).upper():
                 raise UniqueViolationError(str(e)) from e
@@ -209,9 +207,7 @@ class AsyncModelDelegate(Generic[T]):
     ) -> int:
         clean = self._strip_relation_keys(self._inject_updated_at(data))
         stmt = update(self._table).where(build_where(self._table, where, self._field_column_map)).values(**clean)
-        async with self._conn._engine.begin() as conn:  # type: ignore[union-attr]
-            result = await conn.execute(stmt)
-            return result.rowcount
+        return await self._conn.execute_dml(stmt)
 
     async def delete(
         self,
@@ -235,9 +231,7 @@ class AsyncModelDelegate(Generic[T]):
         stmt = delete(self._table)
         if where:
             stmt = stmt.where(build_where(self._table, where, self._field_column_map))
-        async with self._conn._engine.begin() as conn:  # type: ignore[union-attr]
-            result = await conn.execute(stmt)
-            return result.rowcount
+        return await self._conn.execute_dml(stmt)
 
     async def upsert(
         self,
@@ -253,9 +247,8 @@ class AsyncModelDelegate(Generic[T]):
         return await self.update(where=where, data=update, include=include)
 
     async def count(self, *, where: dict[str, Any] | None = None) -> int:
-        stmt = select(func.count()).select_from(self._table)
+        stmt = select(func.count().label("n")).select_from(self._table)
         if where:
             stmt = stmt.where(build_where(self._table, where, self._field_column_map))
-        async with self._conn._engine.connect() as conn:  # type: ignore[union-attr]
-            result = await conn.execute(stmt)
-            return result.scalar() or 0
+        rows = await self._conn.execute(stmt)
+        return rows[0]["n"] if rows else 0
