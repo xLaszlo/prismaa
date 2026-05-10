@@ -9,7 +9,7 @@
 - [x] Step 4 — Composite primary key operations
 - [x] Step 5 — Nested include (multi-level)
 - [x] Step 6 — Error types and constraints
-- [ ] Step 7 — `select` field subset
+- [x] Step 7 — `select` field subset
 - [ ] Step 8 — PostgreSQL parity
 - [ ] Step 9 — Ordering by multiple fields
 - [ ] Step 10 — `distinct` and field-level aggregation

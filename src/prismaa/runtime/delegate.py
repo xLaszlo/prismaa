@@ -3,7 +3,8 @@ from __future__ import annotations
 import datetime
 from typing import Any, Generic, Type, TypeVar
 
-from sqlalchemy import Table, and_, delete, func, insert, select, update
+from sqlalchemy import Table, and_, delete, func, insert, update
+from sqlalchemy import select as select_sa
 
 from .connection import AsyncConnectionManager
 from .errors import ForeignKeyViolationError, RecordNotFoundError, UniqueViolationError
@@ -50,6 +51,26 @@ class AsyncModelDelegate(Generic[T]):
         """Translate column names → field names then construct the model."""
         mapped = {self._col_to_field_map.get(k, k): v for k, v in row_dict.items()}
         return self._model_cls(**mapped)
+
+    def _partial_row_to_model(self, row_dict: dict[str, Any], select: dict[str, bool]) -> T:
+        """Build a model with only the selected fields populated (bypasses Pydantic validation)."""
+        selected = {f for f, v in select.items() if v}
+        col_names = {c.name for c in self._table.columns}
+        mapped: dict[str, Any] = {}
+        for k, v in row_dict.items():
+            if k in col_names:
+                field_name = self._col_to_field_map.get(k, k)
+                if field_name in selected:
+                    mapped[field_name] = v
+            else:
+                mapped[k] = v  # relation objects attached by _attach_includes
+        return self._model_cls.model_construct(**mapped)
+
+    def _validate_select(self, select: dict[str, bool]) -> None:
+        known = set(self._field_column_map.keys())
+        unknown = [f for f, v in select.items() if v and f not in known]
+        if unknown:
+            raise ValueError(f"Unknown field(s) in select: {unknown}")
 
     async def _attach_includes(self, rows: list[dict[str, Any]], include: dict[str, Any] | None) -> None:
         if include:
@@ -118,15 +139,20 @@ class AsyncModelDelegate(Generic[T]):
         *,
         where: dict[str, Any],
         include: dict[str, Any] | None = None,
+        select: dict[str, bool] | None = None,
     ) -> T | None:
         self._validate_unique_where(where)
+        if select:
+            self._validate_select(select)
         clause = self._build_unique_where(where)
-        stmt = select(self._table).where(clause)
+        stmt = select_sa(self._table).where(clause)
         rows = await self._conn.execute(stmt)
         if not rows:
             return None
         row_dicts = [dict(r) for r in rows]
         await self._attach_includes(row_dicts, include)
+        if select:
+            return self._partial_row_to_model(row_dicts[0], select)
         return self._row_to_model(row_dicts[0])
 
     async def find_first(
@@ -136,8 +162,9 @@ class AsyncModelDelegate(Generic[T]):
         include: dict[str, Any] | None = None,
         order: dict[str, str] | list[dict[str, str]] | None = None,
         skip: int | None = None,
+        select: dict[str, bool] | None = None,
     ) -> T | None:
-        results = await self.find_many(where=where, include=include, order=order, skip=skip, take=1)
+        results = await self.find_many(where=where, include=include, order=order, skip=skip, take=1, select=select)
         return results[0] if results else None
 
     async def find_many(
@@ -148,8 +175,9 @@ class AsyncModelDelegate(Generic[T]):
         order: dict[str, str] | list[dict[str, str]] | None = None,
         take: int | None = None,
         skip: int | None = None,
+        select: dict[str, bool] | None = None,
     ) -> list[T]:
-        stmt = select(self._table)
+        stmt = select_sa(self._table)
         if where:
             stmt = stmt.where(build_where(self._table, where, self._field_column_map))
         if order:
@@ -270,7 +298,7 @@ class AsyncModelDelegate(Generic[T]):
         return await self.update(where=where, data=update, include=include)
 
     async def count(self, *, where: dict[str, Any] | None = None) -> int:
-        stmt = select(func.count().label("n")).select_from(self._table)
+        stmt = select_sa(func.count().label("n")).select_from(self._table)
         if where:
             stmt = stmt.where(build_where(self._table, where, self._field_column_map))
         rows = await self._conn.execute(stmt)
