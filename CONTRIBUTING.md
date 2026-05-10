@@ -60,26 +60,3 @@ After implementing the generator (Phase 3):
 ```bash
 uv run prismaa generate --schema example/schema.prisma
 ```
-
-## Releasing a new version
-
-Publishing is fully automated via GitHub Actions — no manual PyPI upload needed.
-
-1. Update `version` in [pyproject.toml](pyproject.toml)
-2. Commit: `git commit -m "chore: bump version to vX.Y.Z"`
-3. Tag and push: `git tag vX.Y.Z && git push --tags`
-
-The `release.yml` workflow picks up the tag, builds the wheel + sdist, and publishes to PyPI via **Trusted Publisher (OIDC)** — no API token is stored in the repository.
-
-> **First-time setup:** the project must exist on PyPI before the Trusted Publisher can be linked.
-> 1. Build and upload the first release manually once:
->    ```bash
->    uv build
->    uv run twine upload dist/*   # needs twine: uv add --dev twine
->    ```
-> 2. Then on PyPI go to *Your projects → prismaa → Manage → Trusted Publishers → Add* and fill in:
->    - Owner: your GitHub username
->    - Repository: `prismaa`
->    - Workflow filename: `release.yml`
->    - Environment name: `pypi`
-> 3. All future releases via `git tag vX.Y.Z && git push --tags` are fully automated — no token needed.

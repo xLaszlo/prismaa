@@ -13,9 +13,9 @@
 - [x] Step 8 — PostgreSQL parity (93/93 on both SQLite and PostgreSQL)
 - [x] Step 9 — Ordering by multiple fields
 - [x] Step 10 — `distinct` and field-level aggregation
-- [ ] Step 11 — `find_unique_or_raise` / `find_first_or_raise`
-- [ ] Step 12 — Atomic updates (`increment`, `decrement`, `multiply`, `divide` on numeric fields)
-- [ ] Step 13 — Nested writes (`connect`, `disconnect`, `connectOrCreate` in `create` / `update`)
+- [x] Step 11 — `find_unique_or_raise` / `find_first_or_raise`
+- [x] Step 12 — Atomic updates (`increment`, `decrement`, `multiply`, `divide` on numeric fields)
+- [x] Step 13 — Nested writes (`connect`, `disconnect`, `connectOrCreate` in `create` / `update`)
 - [ ] Step 14 — `include` with sub-filters (`where`, `take`, `skip`, `orderBy` inside include)
 - [ ] Step 15 — Cursor-based pagination (`cursor` on `find_many`)
 - [ ] Step 16 — `count` with `select` (field-level counts), `take`, and `skip`

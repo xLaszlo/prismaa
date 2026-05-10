@@ -112,6 +112,79 @@ class AsyncModelDelegate(Generic[T]):
                 result[col_name] = v
         return result
 
+    _ATOMIC_OPS = {
+        "increment": lambda col, val: col + val,
+        "decrement": lambda col, val: col - val,
+        "multiply": lambda col, val: col * val,
+        "divide": lambda col, val: col / val,
+    }
+
+    def _build_update_values(self, data: dict[str, Any]) -> dict:
+        """Translate update data, resolving atomic operator dicts to SQLAlchemy expressions."""
+        col_names = {c.name for c in self._table.columns}
+        result: dict = {}
+        for k, v in data.items():
+            col_name = self._field_column_map.get(k, k)
+            if col_name not in col_names:
+                continue
+            col = self._table.c[col_name]
+            if isinstance(v, dict):
+                for op, operand in v.items():
+                    if op in self._ATOMIC_OPS:
+                        result[col] = self._ATOMIC_OPS[op](col, operand)
+                        break
+            else:
+                result[col_name] = v
+        return result
+
+    async def _resolve_nested_writes(self, data: dict[str, Any]) -> dict[str, Any]:
+        """Resolve connect / disconnect / connectOrCreate on FK-side relations to scalar FK values."""
+        result = dict(data)
+        for rel in self._relations:
+            name = rel["name"]
+            fk_fields: list[str] = rel.get("fk_fields", [])
+            references: list[str] = rel.get("references", [])
+            if name not in result or not fk_fields:
+                continue
+            val = result.pop(name)
+            if not isinstance(val, dict):
+                continue
+            if "connect" in val:
+                connect_where = val["connect"]
+                for fk_col, ref_field in zip(fk_fields, references, strict=True):
+                    field_name = self._col_to_field_map.get(fk_col, fk_col)
+                    result[field_name] = connect_where.get(ref_field)
+            elif "disconnect" in val:
+                for fk_col in fk_fields:
+                    field_name = self._col_to_field_map.get(fk_col, fk_col)
+                    result[field_name] = None
+            elif "connectOrCreate" in val:
+                coc = val["connectOrCreate"]
+                where_data: dict[str, Any] = coc["where"]
+                create_data: dict[str, Any] = coc["create"]
+                related_model = rel["model"]
+                related_table = self._all_tables[related_model]
+                related_fcm = self._all_field_column_maps[related_model]
+                # Try to find the existing related record
+                where_parts = [related_table.c[related_fcm.get(k, k)] == v for k, v in where_data.items()]
+                existing = await self._conn.execute(select_sa(related_table).where(and_(*where_parts)))
+                if existing:
+                    row = dict(existing[0])
+                else:
+                    clean = {
+                        related_fcm.get(k, k): v
+                        for k, v in create_data.items()
+                        if related_fcm.get(k, k) in {c.name for c in related_table.columns}
+                    }
+                    new_rows = await self._conn.execute_write(
+                        insert(related_table).values(**clean).returning(related_table)
+                    )
+                    row = dict(new_rows[0])
+                for fk_col, ref_field in zip(fk_fields, references, strict=True):
+                    field_name = self._col_to_field_map.get(fk_col, fk_col)
+                    result[field_name] = row.get(ref_field)
+        return result
+
     @staticmethod
     def _wrap_integrity_error(exc: Exception) -> Exception:
         msg = str(exc).upper()
@@ -155,6 +228,18 @@ class AsyncModelDelegate(Generic[T]):
             return self._partial_row_to_model(row_dicts[0], select)
         return self._row_to_model(row_dicts[0])
 
+    async def find_unique_or_raise(
+        self,
+        *,
+        where: dict[str, Any],
+        include: dict[str, Any] | None = None,
+        select: dict[str, bool] | None = None,
+    ) -> T:
+        result = await self.find_unique(where=where, include=include, select=select)
+        if result is None:
+            raise RecordNotFoundError(f"No record found matching {where}")
+        return result
+
     async def find_first(
         self,
         *,
@@ -166,6 +251,20 @@ class AsyncModelDelegate(Generic[T]):
     ) -> T | None:
         results = await self.find_many(where=where, include=include, order=order, skip=skip, take=1, select=select)
         return results[0] if results else None
+
+    async def find_first_or_raise(
+        self,
+        *,
+        where: dict[str, Any] | None = None,
+        include: dict[str, Any] | None = None,
+        order: dict[str, str] | list[dict[str, str]] | None = None,
+        skip: int | None = None,
+        select: dict[str, bool] | None = None,
+    ) -> T:
+        result = await self.find_first(where=where, include=include, order=order, skip=skip, select=select)
+        if result is None:
+            raise RecordNotFoundError(f"No record found matching where={where}")
+        return result
 
     async def find_many(
         self,
@@ -229,6 +328,7 @@ class AsyncModelDelegate(Generic[T]):
         data: dict[str, Any],
         include: dict[str, Any] | None = None,
     ) -> T:
+        data = await self._resolve_nested_writes(data)
         clean = self._strip_relation_keys(self._inject_updated_at(data))
         stmt = insert(self._table).values(**clean).returning(self._table)
         try:
@@ -279,9 +379,10 @@ class AsyncModelDelegate(Generic[T]):
         data: dict[str, Any],
         include: dict[str, Any] | None = None,
     ) -> T:
-        clean = self._strip_relation_keys(self._inject_updated_at(data))
+        data = await self._resolve_nested_writes(data)
+        vals = self._build_update_values(self._inject_updated_at(data))
         clause = self._build_unique_where(where)
-        stmt = update(self._table).where(clause).values(**clean).returning(self._table)
+        stmt = update(self._table).where(clause).values(vals).returning(self._table)
         rows = await self._conn.execute_write(stmt)
         if not rows:
             raise RecordNotFoundError(f"No record found matching {where}")
@@ -295,8 +396,8 @@ class AsyncModelDelegate(Generic[T]):
         where: dict[str, Any],
         data: dict[str, Any],
     ) -> int:
-        clean = self._strip_relation_keys(self._inject_updated_at(data))
-        stmt = update(self._table).where(build_where(self._table, where, self._field_column_map)).values(**clean)
+        vals = self._build_update_values(self._inject_updated_at(data))
+        stmt = update(self._table).where(build_where(self._table, where, self._field_column_map)).values(vals)
         return await self._conn.execute_dml(stmt)
 
     async def delete(
