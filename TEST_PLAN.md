@@ -11,8 +11,8 @@
 - [x] Step 6 — Error types and constraints
 - [x] Step 7 — `select` field subset
 - [x] Step 8 — PostgreSQL parity (93/93 on both SQLite and PostgreSQL)
-- [ ] Step 9 — Ordering by multiple fields
-- [ ] Step 10 — `distinct` and field-level aggregation
+- [x] Step 9 — Ordering by multiple fields
+- [x] Step 10 — `distinct` and field-level aggregation
 
 ### Issues not covered by tests
 - [ ] 1. `where` with `None` value → `IS NULL`

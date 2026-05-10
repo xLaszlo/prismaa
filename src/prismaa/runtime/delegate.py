@@ -176,10 +176,19 @@ class AsyncModelDelegate(Generic[T]):
         take: int | None = None,
         skip: int | None = None,
         select: dict[str, bool] | None = None,
+        distinct: list[str] | None = None,
     ) -> list[T]:
+        if select:
+            self._validate_select(select)
         stmt = select_sa(self._table)
         if where:
             stmt = stmt.where(build_where(self._table, where, self._field_column_map))
+        # PostgreSQL supports DISTINCT ON; prepend distinct cols to ORDER BY as required
+        if distinct and self._conn.dialect_name == "postgresql":
+            pg_cols = [self._table.c[self._field_column_map.get(f, f)] for f in distinct]
+            stmt = stmt.distinct(*pg_cols)
+            for col in pg_cols:
+                stmt = stmt.order_by(col)
         if order:
             orders = [order] if isinstance(order, dict) else order
             for o in orders:
@@ -187,13 +196,31 @@ class AsyncModelDelegate(Generic[T]):
                     col_name = self._field_column_map.get(field, field)
                     col = self._table.c[col_name]
                     stmt = stmt.order_by(col.asc() if direction == "asc" else col.desc())
-        if skip:
-            stmt = stmt.offset(skip)
-        if take:
-            stmt = stmt.limit(take)
+        # For non-PostgreSQL with distinct, skip SQL pagination; apply after Python dedup
+        if not (distinct and self._conn.dialect_name != "postgresql"):
+            if skip:
+                stmt = stmt.offset(skip)
+            if take:
+                stmt = stmt.limit(take)
         rows = await self._conn.execute(stmt)
         row_dicts = [dict(r) for r in rows]
+        # Python-level deduplication for databases that don't support DISTINCT ON
+        if distinct and self._conn.dialect_name != "postgresql":
+            seen: set = set()
+            deduped: list[dict[str, Any]] = []
+            for row in row_dicts:
+                key = tuple(row.get(self._field_column_map.get(f, f)) for f in distinct)
+                if key not in seen:
+                    seen.add(key)
+                    deduped.append(row)
+            row_dicts = deduped
+            if skip:
+                row_dicts = row_dicts[skip:]
+            if take:
+                row_dicts = row_dicts[:take]
         await self._attach_includes(row_dicts, include)
+        if select:
+            return [self._partial_row_to_model(r, select) for r in row_dicts]
         return [self._row_to_model(r) for r in row_dicts]
 
     async def create(

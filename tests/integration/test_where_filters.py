@@ -146,6 +146,22 @@ class TestOrderingAndPagination(ThreeUsersTestCase):
         scores = [u.score for u in users]
         self.assertEqual(scores, sorted(scores, reverse=True))
 
+    async def test_order_multiple_fields(self) -> None:
+        users = await self.db.user.find_many(
+            where={"email": {"startswith": "filter_"}},
+            order=[{"score": "desc"}, {"displayName": "asc"}],
+        )
+        self.assertEqual(len(users), 3)
+        self.assertEqual([u.displayName for u in users], ["Gamma", "Beta", "Alpha"])
+
+    async def test_order_by_mapped_column(self) -> None:
+        # displayName maps to display_name column; ordering must resolve via field_column_map
+        users = await self.db.user.find_many(
+            where={"email": {"startswith": "filter_"}},
+            order={"displayName": "asc"},
+        )
+        self.assertEqual([u.displayName for u in users], ["Alpha", "Beta", "Gamma"])
+
     async def test_take_limits_results(self) -> None:
         users = await self.db.user.find_many(
             where={"email": {"startswith": "filter_"}},
@@ -166,3 +182,30 @@ class TestOrderingAndPagination(ThreeUsersTestCase):
         )
         self.assertEqual(len(skipped), len(all_users) - 1)
         self.assertEqual(skipped[0].id, all_users[1].id)
+
+
+class TestTieBreakerOrdering(PrismaTestCase):
+    """Tests that a secondary order_by field breaks ties deterministically."""
+
+    async def asyncSetUp(self) -> None:
+        await super().asyncSetUp()
+        self.users = await self.db.user.create_many(
+            data=[
+                {"email": "tie_high@test.com", "username": "tie_high", "displayName": "Mid", "score": 9.0},
+                {"email": "tie_a@test.com", "username": "tie_a", "displayName": "Alpha", "score": 5.0},
+                {"email": "tie_z@test.com", "username": "tie_z", "displayName": "Zeta", "score": 5.0},
+            ]
+        )
+
+    async def asyncTearDown(self) -> None:
+        await self.db.user.delete_many(
+            where={"email": {"in_": ["tie_high@test.com", "tie_a@test.com", "tie_z@test.com"]}}
+        )
+        await super().asyncTearDown()
+
+    async def test_secondary_sort_breaks_ties(self) -> None:
+        users = await self.db.user.find_many(
+            where={"email": {"startswith": "tie_"}},
+            order=[{"score": "desc"}, {"displayName": "asc"}],
+        )
+        self.assertEqual([u.displayName for u in users], ["Mid", "Alpha", "Zeta"])
