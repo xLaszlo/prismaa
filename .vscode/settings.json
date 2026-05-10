@@ -1,0 +1,18 @@
+{
+    "workbench.colorTheme": "GitHub Dark Default",
+    "editor.formatOnSave": true,
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        },
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4
+    },
+    "python.formatting.provider": "none",
+    "workbench.editor.enablePreviewFromQuickOpen": false,
+    "workbench.editor.enablePreview": false,
+    "comments.visible": false,
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 100,
+}

@@ -22,7 +22,7 @@ def _prisma_push(cmd: list[str]) -> None:
     result = subprocess.run(cmd, capture_output=True, text=True)
     if result.returncode != 0:
         raise RuntimeError(
-            f"prisma db push failed (exit {result.returncode}):\n" f"{result.stdout}\n{result.stderr}".strip()
+            f"prisma db push failed (exit {result.returncode}):\n{result.stdout}\n{result.stderr}".strip()
         )
 
 
