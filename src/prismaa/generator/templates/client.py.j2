@@ -91,6 +91,7 @@ class Prisma:
                 {% endfor %}
             },
             all_field_column_maps=FIELD_COLUMN_MAPS,
+            all_relations=_RELATIONS,
             conn=self._conn,
         )
         {% endfor %}

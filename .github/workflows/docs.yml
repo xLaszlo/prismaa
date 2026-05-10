@@ -19,7 +19,7 @@ jobs:
       - uses: astral-sh/setup-uv@v8.1.0
 
       - name: Install dependencies
-        run: uv sync --group dev
+        run: uv sync --locked --group dev
 
       - name: Deploy docs
-        run: uv run mkdocs gh-deploy --force
+        run: uv run --locked mkdocs gh-deploy --force

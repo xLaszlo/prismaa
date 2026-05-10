@@ -1,14 +1,13 @@
 generator client {
-  provider                    = "prisma-client-py"
-  output                      = "./generated"
+  provider                    = "prismaa"
+  output                      = "../prisma"
   interface                   = "asyncio"
-  recursive_type_depth        = 5
-  enable_experimental_decimal = true
+  recursive_type_depth        = "5"
+  enable_experimental_decimal = "true"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider = "postgresql"
 }
 
 /// A registered user account.
@@ -17,7 +16,7 @@ model User {
   email       String   @unique
   username    String   @unique
   displayName String   @map("display_name")
-  isActive    Boolean  @default(true) @map("is_active")
+  isActive    Boolean  @default(true)  @map("is_active")
   score       Float    @default(0.0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -32,7 +31,7 @@ model Profile {
   id        Int     @id @default(autoincrement())
   bio       String?
   avatarUrl String? @map("avatar_url")
-  metadata  String?
+  metadata  Json?
   userId    Int     @unique @map("user_id")
   user      User    @relation(fields: [userId], references: [id])
 
@@ -45,9 +44,9 @@ model Post {
   title       String
   slug        String    @unique
   content     String
-  viewCount   BigInt    @default(0) @map("view_count")
+  viewCount   BigInt    @default(0)     @map("view_count")
   rating      Decimal?
-  publishedAt DateTime? @map("published_at")
+  publishedAt DateTime?                 @map("published_at")
   isPublished Boolean   @default(false) @map("is_published")
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt

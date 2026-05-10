@@ -3,14 +3,14 @@
 ## Progress Checklist
 
 ### Steps (compatibility work)
-- [ ] Step 1 — `find_first` coverage
-- [ ] Step 2 — Connection lifecycle
-- [ ] Step 3 — Scalar type round-trips
-- [ ] Step 4 — Composite primary key operations
-- [ ] Step 5 — Nested include (multi-level)
-- [ ] Step 6 — Error types and constraints
-- [ ] Step 7 — `select` field subset
-- [ ] Step 8 — PostgreSQL parity
+- [x] Step 1 — `find_first` coverage
+- [x] Step 2 — Connection lifecycle
+- [x] Step 3 — Scalar type round-trips
+- [x] Step 4 — Composite primary key operations
+- [x] Step 5 — Nested include (multi-level)
+- [x] Step 6 — Error types and constraints
+- [x] Step 7 — `select` field subset
+- [x] Step 8 — PostgreSQL parity (93/93 on both SQLite and PostgreSQL)
 - [ ] Step 9 — Ordering by multiple fields
 - [ ] Step 10 — `distinct` and field-level aggregation
 
@@ -50,6 +50,8 @@ This plan covers test coverage needed for drop-in compatibility with the legacy 
 - **Database targets**: SQLite (primary) and PostgreSQL — additional databases available via SQLAlchemy driver URL
 - **Async-first** — sync wrapper is a later concern
 - **Test style** — all new integration tests use `unittest.IsolatedAsyncioTestCase` with `self.assertXXX` assertions; DB is created once per class in `setUpClass`, client is connected/disconnected in `asyncSetUp`/`asyncTearDown`
+- **Running tests** — always use `uv run --locked pytest ...`; the `--locked` flag prevents uv from silently updating the venv. Same applies to `uv sync` → `uv sync --locked`. All CI workflow steps follow this convention.
+- **Prisma CLI compatibility** — schema files must be compatible with the **latest Prisma CLI (JavaScript, v7+)**. Prisma v7 removed `url` from the `datasource` block in schema files; the URL must be passed via `--url` on the CLI or via `prisma.config.ts`. Test infrastructure passes `--url` directly. We test against the **latest (now-obsolete) prisma-client-py Python API** for behavioural parity, but the schema format must always satisfy the current Prisma JS CLI.
 
 ---
 

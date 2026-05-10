@@ -15,3 +15,7 @@ class UniqueViolationError(PrismaError):
 
 class MissingRequiredValueError(PrismaError):
     pass
+
+
+class ForeignKeyViolationError(PrismaError):
+    pass
