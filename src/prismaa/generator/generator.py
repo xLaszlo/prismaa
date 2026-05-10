@@ -20,7 +20,7 @@ _SA_TYPE_MAP = {
     "Bytes": "LargeBinary",
     "BigInt": "BigInteger",
     "Decimal": "Numeric",
-    "Json": "Text",
+    "Json": "JSON",
 }
 
 # Prisma scalar type → Python type annotation
