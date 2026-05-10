@@ -48,6 +48,12 @@ class AsyncConnectionManager:
             result: CursorResult = await conn.execute(stmt, data) if data is not None else await conn.execute(stmt)
             return result.rowcount
 
+    @property
+    def dialect_name(self) -> str:
+        if self._engine is None:
+            return "sqlite"
+        return self._engine.dialect.name
+
     async def __aenter__(self) -> AsyncConnectionManager:
         return self
 

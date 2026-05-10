@@ -1,0 +1,117 @@
+generator client {
+  provider                    = "prismaa"
+  output                      = "../prisma"
+  interface                   = "asyncio"
+  recursive_type_depth        = "5"
+  enable_experimental_decimal = "true"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// A registered user account.
+model User {
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  username    String   @unique
+  displayName String   @map("display_name")
+  isActive    Boolean  @default(true)  @map("is_active")
+  score       Float    @default(0.0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  profile  Profile?
+  posts    Post[]
+  comments Comment[]
+}
+
+/// Extended profile — one-to-one with User.
+model Profile {
+  id        Int     @id @default(autoincrement())
+  bio       String?
+  avatarUrl String? @map("avatar_url")
+  metadata  Json?
+  userId    Int     @unique @map("user_id")
+  user      User    @relation(fields: [userId], references: [id])
+
+  @@map("user_profiles")
+}
+
+/// A content post authored by a user, optionally assigned to a category.
+model Post {
+  id          Int       @id @default(autoincrement())
+  title       String
+  slug        String    @unique
+  content     String
+  viewCount   BigInt    @default(0)     @map("view_count")
+  rating      Decimal?
+  publishedAt DateTime?                 @map("published_at")
+  isPublished Boolean   @default(false) @map("is_published")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  authorId    Int       @map("author_id")
+  categoryId  Int?      @map("category_id")
+
+  author   User      @relation(fields: [authorId], references: [id])
+  category Category? @relation(fields: [categoryId], references: [id])
+  comments Comment[]
+  tags     PostTag[]
+
+  @@index([authorId, createdAt])
+}
+
+/// Groups posts into named categories.
+model Category {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  description String?
+  posts       Post[]
+}
+
+/// A label that can be applied to many posts (many-to-many via PostTag).
+model Tag {
+  id    Int       @id @default(autoincrement())
+  name  String    @unique
+  posts PostTag[]
+}
+
+/// Explicit many-to-many join table for Post ↔ Tag.
+model PostTag {
+  postId    Int      @map("post_id")
+  tagId     Int      @map("tag_id")
+  createdAt DateTime @default(now())
+
+  post Post @relation(fields: [postId], references: [id])
+  tag  Tag  @relation(fields: [tagId], references: [id])
+
+  @@id([postId, tagId])
+  @@map("post_tags")
+}
+
+/// A comment left on a post by a user.
+model Comment {
+  id        Int      @id @default(autoincrement())
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  postId    Int      @map("post_id")
+  authorId  Int      @map("author_id")
+
+  post   Post @relation(fields: [postId], references: [id])
+  author User @relation(fields: [authorId], references: [id])
+
+  @@unique([postId, authorId])
+  @@index([postId])
+}
+
+/// Binary asset — demonstrates Bytes and all remaining scalar types.
+model Asset {
+  id        Int      @id @default(autoincrement())
+  name      String
+  mimeType  String   @map("mime_type")
+  data      Bytes
+  sizeBytes BigInt   @map("size_bytes")
+  checksum  String?
+  createdAt DateTime @default(now())
+}

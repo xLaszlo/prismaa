@@ -96,7 +96,7 @@ class AsyncModelDelegate(Generic[T]):
 
     def _inject_updated_at(self, data: dict[str, Any]) -> dict[str, Any]:
         """Set @updatedAt fields to current UTC time."""
-        now = datetime.datetime.now(datetime.timezone.utc)
+        now = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None)
         result = dict(data)
         for field in self._updated_at_fields:
             result[field] = now
@@ -223,13 +223,25 @@ class AsyncModelDelegate(Generic[T]):
         if not data:
             return 0
         rows_clean = [self._strip_relation_keys(self._inject_updated_at(d)) for d in data]
-        stmt = insert(self._table)
-        if skip_duplicates:
-            from sqlalchemy.dialects.sqlite import insert as sqlite_insert
-
-            stmt = sqlite_insert(self._table).prefix_with("OR IGNORE")
         try:
-            return await self._conn.execute_dml(stmt, rows_clean)
+            if skip_duplicates and self._conn.dialect_name == "postgresql":
+                # Use a single multi-row INSERT with RETURNING to count only inserted rows
+                from sqlalchemy import literal
+                from sqlalchemy.dialects.postgresql import insert as pg_insert
+
+                stmt = pg_insert(self._table).values(rows_clean).on_conflict_do_nothing().returning(literal(1))
+                rows = await self._conn.execute_write(stmt)
+                return len(rows)
+            elif skip_duplicates:
+                from sqlalchemy.dialects.sqlite import insert as sqlite_insert
+
+                stmt = sqlite_insert(self._table).prefix_with("OR IGNORE")
+                return await self._conn.execute_dml(stmt, rows_clean)
+            else:
+                stmt = insert(self._table)
+                count = await self._conn.execute_dml(stmt, rows_clean)
+                # asyncpg executemany always returns -1; all rows inserted or exception raised
+                return len(rows_clean) if count == -1 else count
         except Exception as e:
             raise self._wrap_integrity_error(e) from e
 

@@ -54,9 +54,9 @@ def _apply_filter(col: Any, f: dict[str, Any]) -> ColumnElement:
         elif op == "gte":
             parts.append(col >= val)
         elif op == "contains":
-            parts.append(col.like(f"%{val}%"))
+            parts.append(col.ilike(f"%{val}%"))
         elif op == "startswith":
-            parts.append(col.like(f"{val}%"))
+            parts.append(col.ilike(f"{val}%"))
         elif op == "endswith":
-            parts.append(col.like(f"%{val}"))
+            parts.append(col.ilike(f"%{val}"))
     return and_(*parts) if parts else and_(True)
