@@ -26,6 +26,7 @@ class AsyncModelDelegate(Generic[T]):
         all_tables: dict[str, Table],
         all_models: dict[str, Any],
         all_field_column_maps: dict[str, dict[str, str]],
+        all_relations: dict[str, list[dict[str, Any]]],
         conn: AsyncConnectionManager,
     ) -> None:
         self._table = table
@@ -38,6 +39,7 @@ class AsyncModelDelegate(Generic[T]):
         self._all_tables = all_tables
         self._all_models = all_models
         self._all_field_column_maps = all_field_column_maps
+        self._all_relations = all_relations
         self._conn = conn
 
     # ------------------------------------------------------------------
@@ -49,7 +51,7 @@ class AsyncModelDelegate(Generic[T]):
         mapped = {self._col_to_field_map.get(k, k): v for k, v in row_dict.items()}
         return self._model_cls(**mapped)
 
-    async def _attach_includes(self, rows: list[dict[str, Any]], include: dict[str, bool] | None) -> None:
+    async def _attach_includes(self, rows: list[dict[str, Any]], include: dict[str, Any] | None) -> None:
         if include:
             await load_relations(
                 rows,
@@ -59,6 +61,7 @@ class AsyncModelDelegate(Generic[T]):
                 self._all_models,
                 self._conn,
                 all_field_column_maps=self._all_field_column_maps,
+                all_relations=self._all_relations,
                 our_table=self._table,
             )
 
@@ -96,7 +99,7 @@ class AsyncModelDelegate(Generic[T]):
         self,
         *,
         where: dict[str, Any],
-        include: dict[str, bool] | None = None,
+        include: dict[str, Any] | None = None,
     ) -> T | None:
         clause = self._build_unique_where(where)
         stmt = select(self._table).where(clause)
@@ -111,7 +114,7 @@ class AsyncModelDelegate(Generic[T]):
         self,
         *,
         where: dict[str, Any] | None = None,
-        include: dict[str, bool] | None = None,
+        include: dict[str, Any] | None = None,
         order: dict[str, str] | list[dict[str, str]] | None = None,
         skip: int | None = None,
     ) -> T | None:
@@ -122,7 +125,7 @@ class AsyncModelDelegate(Generic[T]):
         self,
         *,
         where: dict[str, Any] | None = None,
-        include: dict[str, bool] | None = None,
+        include: dict[str, Any] | None = None,
         order: dict[str, str] | list[dict[str, str]] | None = None,
         take: int | None = None,
         skip: int | None = None,
@@ -150,7 +153,7 @@ class AsyncModelDelegate(Generic[T]):
         self,
         *,
         data: dict[str, Any],
-        include: dict[str, bool] | None = None,
+        include: dict[str, Any] | None = None,
     ) -> T:
         clean = self._strip_relation_keys(self._inject_updated_at(data))
         stmt = insert(self._table).values(**clean).returning(self._table)
@@ -187,7 +190,7 @@ class AsyncModelDelegate(Generic[T]):
         *,
         where: dict[str, Any],
         data: dict[str, Any],
-        include: dict[str, bool] | None = None,
+        include: dict[str, Any] | None = None,
     ) -> T:
         clean = self._strip_relation_keys(self._inject_updated_at(data))
         clause = self._build_unique_where(where)
@@ -239,7 +242,7 @@ class AsyncModelDelegate(Generic[T]):
         where: dict[str, Any],
         create: dict[str, Any],
         update: dict[str, Any],
-        include: dict[str, bool] | None = None,
+        include: dict[str, Any] | None = None,
     ) -> T:
         existing = await self.find_unique(where=where)
         if existing is None:

@@ -7,7 +7,7 @@
 - [x] Step 2 — Connection lifecycle
 - [x] Step 3 — Scalar type round-trips
 - [x] Step 4 — Composite primary key operations
-- [ ] Step 5 — Nested include (multi-level)
+- [x] Step 5 — Nested include (multi-level)
 - [ ] Step 6 — Error types and constraints
 - [ ] Step 7 — `select` field subset
 - [ ] Step 8 — PostgreSQL parity
