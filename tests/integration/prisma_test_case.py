@@ -17,8 +17,9 @@ _SCHEMA_PATH = Path(__file__).parent.parent / "fixtures" / "schema.prisma"
 _PG_SCHEMA_PATH = Path(__file__).parent.parent / "fixtures" / "schema.postgresql.prisma"
 
 
-def _prisma_push(cmd: list[str]) -> None:
+def _prisma_push(schema: Path, url: str) -> None:
     """Run prisma db push, raising RuntimeError with full CLI output on failure."""
+    cmd = ["npx", "--yes", "prisma", "db", "push", "--schema", str(schema), f"--url={url}", "--accept-data-loss"]
     result = subprocess.run(cmd, capture_output=True, text=True)
     if result.returncode != 0:
         raise RuntimeError(
@@ -55,37 +56,13 @@ class PrismaTestCase(unittest.IsolatedAsyncioTestCase):
         if pg_url:
             # Prisma v7 requires --url on the CLI; strip the SQLAlchemy dialect prefix
             prisma_url = pg_url.replace("postgresql+asyncpg://", "postgresql://")
-            _prisma_push(
-                [
-                    "npx",
-                    "--yes",
-                    "prisma",
-                    "db",
-                    "push",
-                    "--schema",
-                    str(_PG_SCHEMA_PATH),
-                    f"--url={prisma_url}",
-                    "--accept-data-loss",
-                ]
-            )
+            _prisma_push(_PG_SCHEMA_PATH, prisma_url)
             asyncio.run(_truncate_all_pg(pg_url))
             cls._db_url = pg_url
         else:
             tmp = tempfile.mkdtemp()
             db_path = Path(tmp) / "test.db"
-            _prisma_push(
-                [
-                    "npx",
-                    "--yes",
-                    "prisma",
-                    "db",
-                    "push",
-                    "--schema",
-                    str(_SCHEMA_PATH),
-                    f"--url=file:{db_path}",
-                    "--accept-data-loss",
-                ]
-            )
+            _prisma_push(_SCHEMA_PATH, f"file:{db_path}")
             cls._db_url = f"sqlite+aiosqlite:///{db_path}"
 
     async def asyncSetUp(self) -> None:
