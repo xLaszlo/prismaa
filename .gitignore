@@ -211,6 +211,7 @@ node_modules/
 
 # Local reference sandbox — not part of the library
 example/
+example2/
 
 # Generated client (re-created by prismaa generate)
 tests/prisma/

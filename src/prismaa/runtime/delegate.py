@@ -72,7 +72,7 @@ class AsyncModelDelegate(Generic[T]):
 
     def _inject_updated_at(self, data: dict[str, Any]) -> dict[str, Any]:
         """Set @updatedAt fields to current UTC time."""
-        now = datetime.datetime.utcnow()
+        now = datetime.datetime.now(datetime.timezone.utc)
         result = dict(data)
         for field in self._updated_at_fields:
             result[field] = now
