@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Sequence
 
-from sqlalchemy import CursorResult, TextClause
+from sqlalchemy import CursorResult, TextClause, event
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 from sqlalchemy.sql import ClauseElement
 
@@ -12,7 +12,14 @@ class AsyncConnectionManager:
         self._engine: AsyncEngine | None = None
 
     async def connect(self, url: str) -> None:
-        self._engine = create_async_engine(url)
+        engine = create_async_engine(url)
+        if url.startswith("sqlite"):
+
+            @event.listens_for(engine.sync_engine, "connect")
+            def _set_sqlite_pragma(dbapi_conn, _):
+                dbapi_conn.execute("PRAGMA foreign_keys=ON")
+
+        self._engine = engine
 
     async def disconnect(self) -> None:
         if self._engine is not None:

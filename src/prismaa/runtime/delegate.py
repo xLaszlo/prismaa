@@ -6,7 +6,7 @@ from typing import Any, Generic, Type, TypeVar
 from sqlalchemy import Table, and_, delete, func, insert, select, update
 
 from .connection import AsyncConnectionManager
-from .errors import RecordNotFoundError, UniqueViolationError
+from .errors import ForeignKeyViolationError, RecordNotFoundError, UniqueViolationError
 from .include import load_relations
 from .where import build_where
 
@@ -91,6 +91,24 @@ class AsyncModelDelegate(Generic[T]):
                 result[col_name] = v
         return result
 
+    @staticmethod
+    def _wrap_integrity_error(exc: Exception) -> Exception:
+        msg = str(exc).upper()
+        if "FOREIGN KEY" in msg:
+            return ForeignKeyViolationError(str(exc))
+        if "UNIQUE" in msg:
+            return UniqueViolationError(str(exc))
+        return exc
+
+    def _validate_unique_where(self, where: dict[str, Any]) -> None:
+        if "__composite__" in self._unique_fields:
+            return
+        if not any(k in self._unique_fields for k in where):
+            raise ValueError(
+                f"find_unique requires at least one unique field "
+                f"({', '.join(self._unique_fields)}); got {list(where.keys())}"
+            )
+
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
@@ -101,6 +119,7 @@ class AsyncModelDelegate(Generic[T]):
         where: dict[str, Any],
         include: dict[str, Any] | None = None,
     ) -> T | None:
+        self._validate_unique_where(where)
         clause = self._build_unique_where(where)
         stmt = select(self._table).where(clause)
         rows = await self._conn.execute(stmt)
@@ -157,7 +176,10 @@ class AsyncModelDelegate(Generic[T]):
     ) -> T:
         clean = self._strip_relation_keys(self._inject_updated_at(data))
         stmt = insert(self._table).values(**clean).returning(self._table)
-        rows = await self._conn.execute_write(stmt)
+        try:
+            rows = await self._conn.execute_write(stmt)
+        except Exception as e:
+            raise self._wrap_integrity_error(e) from e
         if not rows:
             raise RuntimeError("INSERT returned no rows")
         row_dict = dict(rows[0])
@@ -181,9 +203,7 @@ class AsyncModelDelegate(Generic[T]):
         try:
             return await self._conn.execute_dml(stmt, rows_clean)
         except Exception as e:
-            if "UNIQUE" in str(e).upper():
-                raise UniqueViolationError(str(e)) from e
-            raise
+            raise self._wrap_integrity_error(e) from e
 
     async def update(
         self,
