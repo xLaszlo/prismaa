@@ -1,14 +1,15 @@
 from __future__ import annotations
 
 import datetime
-from typing import Any, Generic, Type, TypeVar
+from typing import Any, Generic, TypeVar
 
-from sqlalchemy import Table, and_, delete, func, insert, update
+from sqlalchemy import and_, delete, func, insert, update
 from sqlalchemy import select as select_sa
 
 from .connection import AsyncConnectionManager
 from .errors import ForeignKeyViolationError, RecordNotFoundError, UniqueViolationError
 from .include import load_relations
+from .metadata import ModelMetadata
 from .where import build_where
 
 T = TypeVar("T")
@@ -18,29 +19,19 @@ class AsyncModelDelegate(Generic[T]):
     def __init__(
         self,
         *,
-        table: Table,
-        model_cls: Type[T],
-        field_column_map: dict[str, str],
-        relations: list[dict[str, Any]],
-        unique_fields: list[str],
-        updated_at_fields: list[str],
-        all_tables: dict[str, Table],
-        all_models: dict[str, Any],
-        all_field_column_maps: dict[str, dict[str, str]],
-        all_relations: dict[str, list[dict[str, Any]]],
+        model_name: str,
+        all_metadata: dict[str, ModelMetadata],
         conn: AsyncConnectionManager,
     ) -> None:
-        self._table = table
-        self._model_cls = model_cls
-        self._field_column_map = field_column_map
-        self._col_to_field_map = {v: k for k, v in field_column_map.items()}
-        self._relations = relations
-        self._unique_fields = unique_fields
-        self._updated_at_fields = updated_at_fields
-        self._all_tables = all_tables
-        self._all_models = all_models
-        self._all_field_column_maps = all_field_column_maps
-        self._all_relations = all_relations
+        meta = all_metadata[model_name]
+        self._table = meta.table
+        self._model_cls = meta.model_cls
+        self._field_column_map = meta.field_column_map
+        self._col_to_field_map = {v: k for k, v in meta.field_column_map.items()}
+        self._relations = meta.relations
+        self._unique_fields = meta.unique_fields
+        self._updated_at_fields = meta.updated_at_fields
+        self._all_metadata = all_metadata
         self._conn = conn
 
     # ------------------------------------------------------------------
@@ -78,11 +69,8 @@ class AsyncModelDelegate(Generic[T]):
                 rows,
                 include,
                 self._relations,
-                self._all_tables,
-                self._all_models,
+                self._all_metadata,
                 self._conn,
-                all_field_column_maps=self._all_field_column_maps,
-                all_relations=self._all_relations,
                 our_table=self._table,
             )
 
@@ -141,31 +129,26 @@ class AsyncModelDelegate(Generic[T]):
         """Resolve connect / disconnect / connectOrCreate on FK-side relations to scalar FK values."""
         result = dict(data)
         for rel in self._relations:
-            name = rel["name"]
-            fk_fields: list[str] = rel.get("fk_fields", [])
-            references: list[str] = rel.get("references", [])
-            if name not in result or not fk_fields:
+            if rel.name not in result or not rel.fk_fields:
                 continue
-            val = result.pop(name)
+            val = result.pop(rel.name)
             if not isinstance(val, dict):
                 continue
             if "connect" in val:
                 connect_where = val["connect"]
-                for fk_col, ref_field in zip(fk_fields, references, strict=True):
+                for fk_col, ref_field in zip(rel.fk_fields, rel.references, strict=True):
                     field_name = self._col_to_field_map.get(fk_col, fk_col)
                     result[field_name] = connect_where.get(ref_field)
             elif "disconnect" in val:
-                for fk_col in fk_fields:
-                    field_name = self._col_to_field_map.get(fk_col, fk_col)
-                    result[field_name] = None
+                for fk_col in rel.fk_fields:
+                    result[self._col_to_field_map.get(fk_col, fk_col)] = None
             elif "connectOrCreate" in val:
                 coc = val["connectOrCreate"]
                 where_data: dict[str, Any] = coc["where"]
                 create_data: dict[str, Any] = coc["create"]
-                related_model = rel["model"]
-                related_table = self._all_tables[related_model]
-                related_fcm = self._all_field_column_maps[related_model]
-                # Try to find the existing related record
+                related_meta = self._all_metadata[rel.model]
+                related_table = related_meta.table
+                related_fcm = related_meta.field_column_map
                 where_parts = [related_table.c[related_fcm.get(k, k)] == v for k, v in where_data.items()]
                 existing = await self._conn.execute(select_sa(related_table).where(and_(*where_parts)))
                 if existing:
@@ -180,9 +163,8 @@ class AsyncModelDelegate(Generic[T]):
                         insert(related_table).values(**clean).returning(related_table)
                     )
                     row = dict(new_rows[0])
-                for fk_col, ref_field in zip(fk_fields, references, strict=True):
-                    field_name = self._col_to_field_map.get(fk_col, fk_col)
-                    result[field_name] = row.get(ref_field)
+                for fk_col, ref_field in zip(rel.fk_fields, rel.references, strict=True):
+                    result[self._col_to_field_map.get(fk_col, fk_col)] = row.get(ref_field)
         return result
 
     @staticmethod

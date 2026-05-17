@@ -5,40 +5,35 @@ from typing import Any
 from sqlalchemy import Table, select
 
 from .connection import AsyncConnectionManager
+from .metadata import ModelMetadata, RelationMeta
 
 
 async def load_relations(
     rows: list[dict[str, Any]],
     include: dict[str, Any],
-    relations: list[dict[str, Any]],
-    all_tables: dict[str, Table],
-    all_models: dict[str, Any],
+    relations: list[RelationMeta],
+    all_metadata: dict[str, ModelMetadata],
     conn: AsyncConnectionManager,
-    all_field_column_maps: dict[str, dict[str, str]] | None = None,
-    all_relations: dict[str, list[dict[str, Any]]] | None = None,
     our_table: Table | None = None,
 ) -> None:
     """Attach related records onto each row dict in-place, supporting nested includes."""
     if not rows or not include:
         return
 
-    fcmaps = all_field_column_maps or {}
-
     for rel in relations:
-        name = rel["name"]
-        include_val = include.get(name)
+        include_val = include.get(rel.name)
         if not include_val:
             continue
 
         nested_include = include_val.get("include") if isinstance(include_val, dict) else None
 
-        related_model_name = rel["model"]
-        related_table = all_tables.get(related_model_name)
-        related_model_cls = all_models.get(related_model_name)
-        if related_table is None or related_model_cls is None:
+        related_meta = all_metadata.get(rel.model)
+        if related_meta is None:
             continue
 
-        rel_col_to_field = {v: k for k, v in fcmaps.get(related_model_name, {}).items()}
+        related_table = related_meta.table
+        related_model_cls = related_meta.model_cls
+        rel_col_to_field = {v: k for k, v in related_meta.field_column_map.items()}
 
         def _make_related(
             rd: dict[str, Any],
@@ -48,57 +43,50 @@ async def load_relations(
             mapped = {_fcm.get(k, k): v for k, v in rd.items()}
             return _cls(**mapped)
 
-        fk_fields: list[str] = rel["fk_fields"]
-        is_list: bool = rel["is_list"]
-
-        if fk_fields:
+        if rel.fk_fields:
             # This side holds the FK.
-            references: list[str] = rel["references"]
-            fk_col = references[0]
-            local_col = fk_fields[0]
+            fk_col = rel.references[0]
+            local_col = rel.fk_fields[0]
             local_values = [r[local_col] for r in rows if r.get(local_col) is not None]
             if not local_values:
                 for row in rows:
-                    row[name] = None
+                    row[rel.name] = None
                 continue
 
             stmt = select(related_table).where(related_table.c[fk_col].in_(local_values))
             related_dicts = {r[fk_col]: dict(r) for r in await conn.execute(stmt)}
 
-            if nested_include and all_relations is not None:
+            if nested_include:
                 await load_relations(
                     list(related_dicts.values()),
                     nested_include,
-                    all_relations.get(related_model_name, []),
-                    all_tables,
-                    all_models,
+                    related_meta.relations,
+                    all_metadata,
                     conn,
-                    all_field_column_maps=fcmaps,
-                    all_relations=all_relations,
                     our_table=related_table,
                 )
 
             for row in rows:
                 rd = related_dicts.get(row.get(local_col))
-                row[name] = _make_related(rd) if rd is not None else None
+                row[rel.name] = _make_related(rd) if rd is not None else None
         else:
             # The other side holds the FK pointing back at us.
             back_cols = _find_back_reference(related_table, our_table)
             if not back_cols:
                 for row in rows:
-                    row[name] = [] if is_list else None
+                    row[rel.name] = [] if rel.is_list else None
                 continue
 
             our_col, their_col = back_cols
             our_values = list({r[our_col] for r in rows if r.get(our_col) is not None})
             if not our_values:
                 for row in rows:
-                    row[name] = [] if is_list else None
+                    row[rel.name] = [] if rel.is_list else None
                 continue
 
             stmt = select(related_table).where(related_table.c[their_col].in_(our_values))
 
-            if is_list:
+            if rel.is_list:
                 index_list: dict[Any, list[dict[str, Any]]] = {v: [] for v in our_values}
                 for r in await conn.execute(stmt):
                     rd = dict(r)
@@ -106,42 +94,36 @@ async def load_relations(
                     if key in index_list:
                         index_list[key].append(rd)
 
-                if nested_include and all_relations is not None:
+                if nested_include:
                     all_related_dicts = [d for lst in index_list.values() for d in lst]
                     await load_relations(
                         all_related_dicts,
                         nested_include,
-                        all_relations.get(related_model_name, []),
-                        all_tables,
-                        all_models,
+                        related_meta.relations,
+                        all_metadata,
                         conn,
-                        all_field_column_maps=fcmaps,
-                        all_relations=all_relations,
                         our_table=related_table,
                     )
 
                 for row in rows:
-                    row[name] = [_make_related(d) for d in index_list.get(row[our_col], [])]
+                    row[rel.name] = [_make_related(d) for d in index_list.get(row[our_col], [])]
             else:
                 all_related_dicts = [dict(r) for r in await conn.execute(stmt)]
                 index_one = {d[their_col]: d for d in all_related_dicts}
 
-                if nested_include and all_relations is not None:
+                if nested_include:
                     await load_relations(
                         all_related_dicts,
                         nested_include,
-                        all_relations.get(related_model_name, []),
-                        all_tables,
-                        all_models,
+                        related_meta.relations,
+                        all_metadata,
                         conn,
-                        all_field_column_maps=fcmaps,
-                        all_relations=all_relations,
                         our_table=related_table,
                     )
 
                 for row in rows:
                     rd = index_one.get(row[our_col])
-                    row[name] = _make_related(rd) if rd is not None else None
+                    row[rel.name] = _make_related(rd) if rd is not None else None
 
 
 def _find_back_reference(related_table: Table, our_table: Table | None) -> tuple[str, str] | None:

@@ -5,66 +5,49 @@ from typing import Any
 
 from prismaa.runtime.connection import AsyncConnectionManager
 from prismaa.runtime.delegate import AsyncModelDelegate
+from prismaa.runtime.metadata import ModelMetadata, RelationMeta
 
-from . import models, types
+from . import models
 from .tables import FIELD_COLUMN_MAPS, TABLES, metadata
 
-# Relation metadata: model → list of (attr_name, related_model, fk_field, related_fk, is_list, join_model)
-_RELATIONS: dict[str, list[dict[str, Any]]] = {
+ALL_METADATA: dict[str, ModelMetadata] = {
     {% for model in schema.active_models() %}
-    "{{ model.name }}": [
-        {% for field in model.relation_fields() %}
-        {% set rel_attr = field.get_attr("relation") %}
-        {% if rel_attr and rel_attr.arg("fields") %}
-        {
-            "name": "{{ field.name }}",
-            "model": "{{ field.type }}",
-            "fk_fields": {{ rel_attr.arg("fields") | resolve_col_names(model) | tojson }},
-            "references": {{ rel_attr.arg("references") | resolve_col_names_for(field.type) | tojson }},
-            "is_list": False,
-        },
-        {% else %}
-        {
-            "name": "{{ field.name }}",
-            "model": "{{ field.type }}",
-            "fk_fields": [],
-            "references": [],
-            "is_list": {{ "True" if field.is_list else "False" }},
-        },
-        {% endif %}
-        {% endfor %}
-    ],
-    {% endfor %}
-}
-
-# Unique fields per model: field names that can identify a unique record
-_UNIQUE_FIELDS: dict[str, list[str]] = {
-    {% for model in schema.active_models() %}
-    "{{ model.name }}": [
-        {% for field in model.scalar_fields() %}
-        {% if field.has_attr("id") or field.has_attr("unique") %}
-        "{{ field.name }}",
-        {% endif %}
-        {% endfor %}
-        {% for attr in model.block_attributes %}
-        {% if attr.name == "id" %}
-        "__composite__",
-        {% endif %}
-        {% endfor %}
-    ],
-    {% endfor %}
-}
-
-# @updatedAt fields per model
-_UPDATED_AT_FIELDS: dict[str, list[str]] = {
-    {% for model in schema.active_models() %}
-    "{{ model.name }}": [
-        {% for field in model.scalar_fields() %}
-        {% if field.has_attr("updatedAt") %}
-        "{{ field.name }}",
-        {% endif %}
-        {% endfor %}
-    ],
+    "{{ model.name }}": ModelMetadata(
+        table=TABLES["{{ model.name }}"],
+        model_cls=models.{{ model.name }},
+        field_column_map=FIELD_COLUMN_MAPS["{{ model.name }}"],
+        relations=[
+            {% for field in model.relation_fields() %}
+            {% set rel_attr = field.get_attr("relation") %}
+            RelationMeta(
+                name="{{ field.name }}",
+                model="{{ field.type }}",
+                fk_fields={{ rel_attr.arg("fields") | resolve_col_names(model) | tojson if rel_attr and rel_attr.arg("fields") else "[]" }},
+                references={{ rel_attr.arg("references") | resolve_col_names_for(field.type) | tojson if rel_attr and rel_attr.arg("references") else "[]" }},
+                is_list={{ field.is_list | bool_lower }},
+            ),
+            {% endfor %}
+        ],
+        unique_fields=[
+            {% for field in model.scalar_fields() %}
+            {% if field.has_attr("id") or field.has_attr("unique") %}
+            "{{ field.name }}",
+            {% endif %}
+            {% endfor %}
+            {% for attr in model.block_attributes %}
+            {% if attr.name == "id" %}
+            "__composite__",
+            {% endif %}
+            {% endfor %}
+        ],
+        updated_at_fields=[
+            {% for field in model.scalar_fields() %}
+            {% if field.has_attr("updatedAt") %}
+            "{{ field.name }}",
+            {% endif %}
+            {% endfor %}
+        ],
+    ),
     {% endfor %}
 }
 
@@ -78,20 +61,8 @@ class Prisma:
         self._conn = AsyncConnectionManager()
         {% for model in schema.active_models() %}
         self.{{ model.name | model_attr }} = AsyncModelDelegate(
-            table=TABLES["{{ model.name }}"],
-            model_cls=models.{{ model.name }},
-            field_column_map=FIELD_COLUMN_MAPS["{{ model.name }}"],
-            relations=_RELATIONS["{{ model.name }}"],
-            unique_fields=_UNIQUE_FIELDS["{{ model.name }}"],
-            updated_at_fields=_UPDATED_AT_FIELDS["{{ model.name }}"],
-            all_tables=TABLES,
-            all_models={
-                {% for m in schema.active_models() %}
-                "{{ m.name }}": models.{{ m.name }},
-                {% endfor %}
-            },
-            all_field_column_maps=FIELD_COLUMN_MAPS,
-            all_relations=_RELATIONS,
+            model_name="{{ model.name }}",
+            all_metadata=ALL_METADATA,
             conn=self._conn,
         )
         {% endfor %}
