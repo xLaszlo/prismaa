@@ -11,26 +11,28 @@
       
       
       
+        <link rel="prev" href="../delete/">
       
-        <link rel="next" href="getting-started/">
+      
+        <link rel="next" href="../transactions-raw/">
       
       
         
       
       
-      <link rel="icon" href="assets/images/favicon.png">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>Prismaa</title>
+        <title>count / group_by - Prismaa</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -49,9 +51,9 @@
       
     
     
-      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -76,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#prismaa" class="md-skip">
+        <a href="#count-group_by" class="md-skip">
           Skip to content
         </a>
       
@@ -90,7 +92,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="Prismaa" class="md-header__button md-logo" aria-label="Prismaa" data-md-component="logo">
+    <a href="../.." title="Prismaa" class="md-header__button md-logo" aria-label="Prismaa" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -110,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Home
+              count / group_by
             
           </span>
         </div>
@@ -219,11 +221,9 @@
   
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="." class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
         
   
   
@@ -242,7 +242,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="getting-started/" class="md-tabs__link">
+      <a href="../../getting-started/" class="md-tabs__link">
         
   
   
@@ -261,7 +261,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="prisma-setup/" class="md-tabs__link">
+      <a href="../../prisma-setup/" class="md-tabs__link">
         
   
   
@@ -280,7 +280,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="schema-reference/" class="md-tabs__link">
+      <a href="../../schema-reference/" class="md-tabs__link">
         
   
   
@@ -297,11 +297,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="api/find-many/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../find-many/" class="md-tabs__link">
           
   
   
@@ -319,7 +321,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="contributing/" class="md-tabs__link">
+      <a href="../../contributing/" class="md-tabs__link">
         
   
   
@@ -354,7 +356,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="Prismaa" class="md-nav__button md-logo" aria-label="Prismaa" data-md-component="logo">
+    <a href="../.." title="Prismaa" class="md-nav__button md-logo" aria-label="Prismaa" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -381,37 +383,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Home
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="." class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -427,81 +402,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#install" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Install
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#quick-start" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Quick start
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#features" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Features
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#why-prismaa" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why Prismaa?
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#next-steps" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Next steps
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -513,7 +413,7 @@
   
   
     <li class="md-nav__item">
-      <a href="getting-started/" class="md-nav__link">
+      <a href="../../getting-started/" class="md-nav__link">
         
   
   
@@ -540,7 +440,7 @@
   
   
     <li class="md-nav__item">
-      <a href="prisma-setup/" class="md-nav__link">
+      <a href="../../prisma-setup/" class="md-nav__link">
         
   
   
@@ -567,7 +467,7 @@
   
   
     <li class="md-nav__item">
-      <a href="schema-reference/" class="md-nav__link">
+      <a href="../../schema-reference/" class="md-nav__link">
         
   
   
@@ -591,26 +491,31 @@
       
   
   
+    
   
   
+  
     
     
     
     
+      
+        
+        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
             
   
   
@@ -628,7 +533,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -646,7 +551,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api/find-many/" class="md-nav__link">
+      <a href="../find-many/" class="md-nav__link">
         
   
   
@@ -674,7 +579,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api/find-unique/" class="md-nav__link">
+      <a href="../find-unique/" class="md-nav__link">
         
   
   
@@ -702,7 +607,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api/create/" class="md-nav__link">
+      <a href="../create/" class="md-nav__link">
         
   
   
@@ -730,7 +635,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api/update/" class="md-nav__link">
+      <a href="../update/" class="md-nav__link">
         
   
   
@@ -758,7 +663,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api/delete/" class="md-nav__link">
+      <a href="../delete/" class="md-nav__link">
         
   
   
@@ -783,10 +688,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="api/count-group-by/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    count / group_by
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -802,6 +734,104 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#count" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        count
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="count">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#field-level-counts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Field-level counts
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#group_by" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        group_by
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="group_by">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#return-shape" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Return shape
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -814,7 +844,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api/transactions-raw/" class="md-nav__link">
+      <a href="../transactions-raw/" class="md-nav__link">
         
   
   
@@ -849,7 +879,7 @@
   
   
     <li class="md-nav__item">
-      <a href="contributing/" class="md-nav__link">
+      <a href="../../contributing/" class="md-nav__link">
         
   
   
@@ -896,57 +926,80 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#install" class="md-nav__link">
+  <a href="#count" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Install
+        count
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="count">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameters
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#quick-start" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#field-level-counts" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Quick start
+        Field-level counts
       
     </span>
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#features" class="md-nav__link">
+  <a href="#group_by" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Features
+        group_by
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="group_by">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameters
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#why-prismaa" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#return-shape" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why Prismaa?
+        Return shape
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#next-steps" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Next steps
-      
-    </span>
-  </a>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -970,57 +1023,132 @@
   
 
 
-<h1 id="prismaa">Prismaa</h1>
-<p>A Python Prisma client backed by SQLAlchemy — no Node.js or Rust at runtime.</p>
-<p>Prismaa reads a standard <code>schema.prisma</code> file and generates a fully-typed async Python client. All queries run through SQLAlchemy Core — SQLite, PostgreSQL, and any other SQLAlchemy dialect work out of the box.</p>
-<hr />
-<h2 id="install">Install</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>prismaa
+<h1 id="count-group_by">count / group_by</h1>
+<h2 id="count">count</h2>
+<p>Returns the number of records matching the filter.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">n</span> <span class="o">=</span> <span class="k">await</span> <span class="n">db</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>                           <span class="c1"># total rows</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">n</span> <span class="o">=</span> <span class="k">await</span> <span class="n">db</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;published&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>  <span class="c1"># filtered</span>
 </code></pre></div>
-<p>For PostgreSQL:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;prismaa[postgresql]&quot;</span>
+<h3 id="parameters">Parameters</h3>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>where</code></td>
+<td><code>dict</code></td>
+<td>Filter conditions</td>
+</tr>
+<tr>
+<td><code>take</code></td>
+<td><code>int</code></td>
+<td>Count only within a window of this size</td>
+</tr>
+<tr>
+<td><code>skip</code></td>
+<td><code>int</code></td>
+<td>Skip this many rows before the window</td>
+</tr>
+<tr>
+<td><code>select</code></td>
+<td><code>dict[str, bool]</code></td>
+<td>Count non-null values per field (returns <code>dict</code>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="field-level-counts">Field-level counts</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">counts</span> <span class="o">=</span> <span class="k">await</span> <span class="n">db</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">select</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;publishedAt&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># {&quot;title&quot;: 42, &quot;publishedAt&quot;: 17}</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># publishedAt is lower because nullable rows are not counted</span>
 </code></pre></div>
 <hr />
-<h2 id="quick-start">Quick start</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Generate the Python client from your schema</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>prismaa<span class="w"> </span>generate<span class="w"> </span>--schema<span class="w"> </span>schema.prisma
+<h2 id="group_by">group_by</h2>
+<p>Groups records by one or more fields and computes aggregations.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">db</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;authorId&quot;</span><span class="p">],</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">count</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;_all&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">avg</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">order_by</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;_avg&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="s2">&quot;desc&quot;</span><span class="p">}},</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">)</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;authorId&quot;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;_count&quot;</span><span class="p">][</span><span class="s2">&quot;_all&quot;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;_avg&quot;</span><span class="p">][</span><span class="s2">&quot;score&quot;</span><span class="p">])</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">prisma</span><span class="w"> </span><span class="kn">import</span> <span class="n">Prisma</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">db</span> <span class="o">=</span> <span class="n">Prisma</span><span class="p">()</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="k">await</span> <span class="n">db</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;sqlite+aiosqlite:///dev.db&quot;</span><span class="p">)</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="n">user</span> <span class="o">=</span> <span class="k">await</span> <span class="n">db</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;alice@example.com&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Alice&quot;</span><span class="p">})</span>
-<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="n">posts</span> <span class="o">=</span> <span class="k">await</span> <span class="n">db</span><span class="o">.</span><span class="n">post</span><span class="o">.</span><span class="n">find_many</span><span class="p">(</span>
-<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="n">where</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;author&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;alice@example.com&quot;</span><span class="p">},</span> <span class="s2">&quot;published&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
-<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>    <span class="n">include</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;author&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
-<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>    <span class="n">order</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;createdAt&quot;</span><span class="p">:</span> <span class="s2">&quot;desc&quot;</span><span class="p">},</span>
-<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="p">)</span>
-<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>
-<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="k">await</span> <span class="n">db</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+<h3 id="parameters_1">Parameters</h3>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>by</code></td>
+<td><code>list[str]</code></td>
+<td>Fields to group by</td>
+</tr>
+<tr>
+<td><code>where</code></td>
+<td><code>dict</code></td>
+<td>Filter applied before grouping</td>
+</tr>
+<tr>
+<td><code>count</code></td>
+<td><code>dict</code> or <code>True</code></td>
+<td>Count records per group</td>
+</tr>
+<tr>
+<td><code>avg</code></td>
+<td><code>dict[str, bool]</code></td>
+<td>Average of numeric fields</td>
+</tr>
+<tr>
+<td><code>sum_</code></td>
+<td><code>dict[str, bool]</code></td>
+<td>Sum of numeric fields</td>
+</tr>
+<tr>
+<td><code>min_</code></td>
+<td><code>dict[str, bool]</code></td>
+<td>Minimum value</td>
+</tr>
+<tr>
+<td><code>max_</code></td>
+<td><code>dict[str, bool]</code></td>
+<td>Maximum value</td>
+</tr>
+<tr>
+<td><code>order_by</code></td>
+<td><code>dict</code> or <code>list[dict]</code></td>
+<td>Sort the groups</td>
+</tr>
+<tr>
+<td><code>take</code></td>
+<td><code>int</code></td>
+<td>Limit number of groups returned</td>
+</tr>
+<tr>
+<td><code>skip</code></td>
+<td><code>int</code></td>
+<td>Skip this many groups</td>
+</tr>
+</tbody>
+</table>
+<h3 id="return-shape">Return shape</h3>
+<p>Each item in the result list contains the group-by field values plus nested aggregation dicts:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="s2">&quot;authorId&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="s2">&quot;_count&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;_all&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="s2">&quot;_avg&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="mf">3.8</span><span class="p">},</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="s2">&quot;_sum&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="mf">19.0</span><span class="p">},</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="p">}</span>
 </code></pre></div>
-<hr />
-<h2 id="features">Features</h2>
-<ul>
-<li><strong>Pure Python runtime</strong> — no Node.js process, no Rust binary at query time</li>
-<li><strong>Async-first</strong> — every method is <code>async</code>; built for <code>asyncio</code></li>
-<li><strong>Fully typed</strong> — Pydantic v2 models, TypedDict query inputs, typed relation attributes</li>
-<li><strong>Prisma v7 schema</strong> — standard schema format; official Prisma CLI handles migrations</li>
-<li><strong>SQLAlchemy backend</strong> — JOIN-based relation filtering, connection pooling, any dialect</li>
-<li><strong>Rich query API</strong> — filtering, ordering, pagination, <code>distinct</code>, <code>include</code>, <code>select</code>, transactions, raw queries, aggregations</li>
-</ul>
-<hr />
-<h2 id="why-prismaa">Why Prismaa?</h2>
-<p>The original <a href="https://github.com/RobertCraigie/prisma-client-py">prisma-client-py</a> is no longer maintained and requires a Rust query engine and a Node.js subprocess at every query. Prismaa replaces that runtime with a pure SQLAlchemy layer — the Prisma CLI is only needed during development for schema migrations, never at runtime.</p>
-<hr />
-<h2 id="next-steps">Next steps</h2>
-<ul>
-<li><a href="getting-started/">Getting Started</a> — build a working app from scratch</li>
-<li><a href="prisma-setup/">Prisma CLI Setup</a> — one-time Node.js and migrations setup</li>
-<li><a href="schema-reference/">Schema Reference</a> — field types, relations, attributes</li>
-<li><a href="api/find-many/">API Reference</a> — all query methods</li>
-</ul>
 
 
 
@@ -1076,10 +1204,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "content.code.copy", "content.code.annotate"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>

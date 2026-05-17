@@ -476,6 +476,24 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Schema Reference
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -492,6 +510,163 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#generator-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generator block
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#datasource-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Datasource block
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scalar types
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default values
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#field-attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Field attributes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#model-attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model attributes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#relations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Relations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#one-to-many" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One-to-many
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#one-to-one" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One-to-one
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#many-to-many-explicit-join-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Many-to-many (explicit join table)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#enums" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enums
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#unsupported-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unsupported types
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -591,7 +766,7 @@
   <span class="md-ellipsis">
     
   
-    find_unique
+    find_unique / find_first
   
 
     
@@ -619,7 +794,7 @@
   <span class="md-ellipsis">
     
   
-    create
+    create / create_many
   
 
     
@@ -647,7 +822,7 @@
   <span class="md-ellipsis">
     
   
-    update
+    update / upsert
   
 
     
@@ -675,7 +850,63 @@
   <span class="md-ellipsis">
     
   
-    delete
+    delete / delete_many
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/count-group-by/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    count / group_by
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/transactions-raw/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transactions & Raw Queries
   
 
     
@@ -743,6 +974,152 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#generator-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generator block
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#datasource-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Datasource block
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scalar-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scalar types
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#default-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default values
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#field-attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Field attributes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#model-attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model attributes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#relations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Relations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#one-to-many" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One-to-many
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#one-to-one" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        One-to-one
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#many-to-many-explicit-join-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Many-to-many (explicit join table)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#enums" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enums
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#unsupported-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unsupported types
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -762,7 +1139,243 @@
 
 
 <h1 id="schema-reference">Schema Reference</h1>
-<p><em>Documentation coming soon.</em></p>
+<p>Prismaa uses the standard <a href="https://www.prisma.io/docs/concepts/components/prisma-schema">Prisma schema language</a>. This page covers the features Prismaa supports and any Prismaa-specific generator options.</p>
+<hr />
+<h2 id="generator-block">Generator block</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>generator client {
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  provider  = &quot;prismaa&quot;
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  output    = &quot;./prisma&quot;      # where to write the generated client
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  interface = &quot;asyncio&quot;       # only asyncio is supported
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>}
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Values</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>provider</code></td>
+<td><code>"prismaa"</code></td>
+<td>Required — selects the Prismaa generator</td>
+</tr>
+<tr>
+<td><code>output</code></td>
+<td>path</td>
+<td>Directory for the generated <code>client.py</code></td>
+</tr>
+<tr>
+<td><code>interface</code></td>
+<td><code>"asyncio"</code></td>
+<td>Client interface style</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="datasource-block">Datasource block</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>datasource db {
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  provider = &quot;sqlite&quot;   # or &quot;postgresql&quot;
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>}
+</code></pre></div>
+<p>No <code>url</code> is set in the schema — the connection URL is passed to <code>db.connect()</code> at runtime. The <code>provider</code> field is used by the Prisma CLI for migrations.</p>
+<hr />
+<h2 id="scalar-types">Scalar types</h2>
+<table>
+<thead>
+<tr>
+<th>Prisma type</th>
+<th>Python type</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>String</code></td>
+<td><code>str</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>Int</code></td>
+<td><code>int</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>BigInt</code></td>
+<td><code>int</code></td>
+<td>Python <code>int</code> handles arbitrary precision</td>
+</tr>
+<tr>
+<td><code>Float</code></td>
+<td><code>float</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>Decimal</code></td>
+<td><code>Decimal</code></td>
+<td><code>decimal.Decimal</code></td>
+</tr>
+<tr>
+<td><code>Boolean</code></td>
+<td><code>bool</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>DateTime</code></td>
+<td><code>datetime</code></td>
+<td><code>datetime.datetime</code> (naive UTC)</td>
+</tr>
+<tr>
+<td><code>Bytes</code></td>
+<td><code>bytes</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>Json</code></td>
+<td><code>Any</code></td>
+<td>Stored as text; round-trips as Python object</td>
+</tr>
+</tbody>
+</table>
+<p>Append <code>?</code> to make any field nullable (<code>String?</code>, <code>Int?</code>, etc.). A nullable field is <code>None</code> in Python when no value is stored.</p>
+<hr />
+<h2 id="default-values">Default values</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>id        Int      @id @default(autoincrement())
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>createdAt DateTime @default(now())
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>isActive  Boolean  @default(true)
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>score     Float    @default(0.0)
+</code></pre></div>
+<hr />
+<h2 id="field-attributes">Field attributes</h2>
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@id</code></td>
+<td>Marks the primary key</td>
+</tr>
+<tr>
+<td><code>@unique</code></td>
+<td>Adds a unique constraint; field can be used in <code>find_unique</code></td>
+</tr>
+<tr>
+<td><code>@default(...)</code></td>
+<td>Sets a default value</td>
+</tr>
+<tr>
+<td><code>@map("col_name")</code></td>
+<td>Maps the Prisma field to a different column name</td>
+</tr>
+<tr>
+<td><code>@updatedAt</code></td>
+<td>Automatically set to the current time on every update</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="model-attributes">Model attributes</h2>
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@@id([fieldA, fieldB])</code></td>
+<td>Composite primary key</td>
+</tr>
+<tr>
+<td><code>@@unique([fieldA, fieldB])</code></td>
+<td>Composite unique constraint</td>
+</tr>
+<tr>
+<td><code>@@index([fieldA, fieldB])</code></td>
+<td>Creates an index (handled by Prisma CLI)</td>
+</tr>
+<tr>
+<td><code>@@map("table_name")</code></td>
+<td>Maps the model to a different table name</td>
+</tr>
+<tr>
+<td><code>@@ignore</code></td>
+<td>Excludes the model from the generated client</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="relations">Relations</h2>
+<h3 id="one-to-many">One-to-many</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>model User {
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  id    Int    @id @default(autoincrement())
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  posts Post[]
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>}
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>model Post {
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>  id       Int  @id @default(autoincrement())
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>  authorId Int
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>  author   User @relation(fields: [authorId], references: [id])
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>}
+</code></pre></div>
+<p><code>Post.authorId</code> is the foreign key. <code>User.posts</code> is the back-reference list.</p>
+<h3 id="one-to-one">One-to-one</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>model User {
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  id      Int      @id @default(autoincrement())
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>  profile Profile?
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>}
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>model Profile {
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>  id     Int  @id @default(autoincrement())
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>  userId Int  @unique
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>  user   User @relation(fields: [userId], references: [id])
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>}
+</code></pre></div>
+<h3 id="many-to-many-explicit-join-table">Many-to-many (explicit join table)</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>model Post {
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>  id   Int       @id @default(autoincrement())
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>  tags PostTag[]
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>}
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>model Tag {
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>  id    Int       @id @default(autoincrement())
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>  name  String    @unique
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>  posts PostTag[]
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>}
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>model PostTag {
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>  postId Int  @map(&quot;post_id&quot;)
+<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>  tagId  Int  @map(&quot;tag_id&quot;)
+<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>  post   Post @relation(fields: [postId], references: [id])
+<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>  tag    Tag  @relation(fields: [tagId], references: [id])
+<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>
+<a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>  @@id([postId, tagId])
+<a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a>}
+</code></pre></div>
+<hr />
+<h2 id="enums">Enums</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>enum Role {
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>  USER
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>  ADMIN
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>  MODERATOR
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>}
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>model User {
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>  id   Int    @id @default(autoincrement())
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>  role Role   @default(USER)
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>}
+</code></pre></div>
+<p>Enums are stored as strings. The generated Python client exposes them as <code>str</code> values matching the Prisma enum member names.</p>
+<hr />
+<h2 id="unsupported-types">Unsupported types</h2>
+<p>Fields declared with <code>Unsupported("...")</code> are excluded from the generated client. Use raw queries (<code>query_raw</code>, <code>execute_raw</code>) to interact with those columns.</p>
 
 
 

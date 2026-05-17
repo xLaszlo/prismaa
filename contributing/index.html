@@ -11,7 +11,7 @@
       
       
       
-        <link rel="prev" href="../api/delete/">
+        <link rel="prev" href="../api/transactions-raw/">
       
       
       
@@ -579,7 +579,7 @@
   <span class="md-ellipsis">
     
   
-    find_unique
+    find_unique / find_first
   
 
     
@@ -607,7 +607,7 @@
   <span class="md-ellipsis">
     
   
-    create
+    create / create_many
   
 
     
@@ -635,7 +635,7 @@
   <span class="md-ellipsis">
     
   
-    update
+    update / upsert
   
 
     
@@ -663,7 +663,63 @@
   <span class="md-ellipsis">
     
   
-    delete
+    delete / delete_many
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/count-group-by/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    count / group_by
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/transactions-raw/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transactions & Raw Queries
   
 
     
@@ -760,13 +816,16 @@
 
 
 <h1 id="contributing">Contributing</h1>
-<p>See <a href="https://github.com/xLaszlo/prismaa/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a> in the repository root for the full guide, including:</p>
+<p>Found a bug or have a feature idea? Please open an issue on <a href="https://github.com/xLaszlo/prismaa/issues">GitHub Issues</a>.</p>
+<p>When reporting a bug, include a <strong>minimal reproducible example</strong>:</p>
 <ul>
-<li>Local setup with <code>uv</code> and <code>fnm</code></li>
-<li>Running tests</li>
-<li>Linting and formatting</li>
-<li>Release process</li>
+<li>The relevant part of your <code>schema.prisma</code></li>
+<li>The Python code that triggers the problem</li>
+<li>The full error message and traceback</li>
+<li>Which database and driver you are using</li>
 </ul>
+<p>When proposing a feature, describe the problem it solves rather than jumping straight to a solution.</p>
+<p><strong>Please do not open pull requests.</strong> A clear, reproducible issue is more useful than an unsolicited PR and avoids wasted effort on both sides.</p>
 
 
 
