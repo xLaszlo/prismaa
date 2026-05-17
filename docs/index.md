@@ -1,35 +1,71 @@
 # Prismaa
 
-A production-grade Python Prisma client — no Node.js runtime, no Rust binary.
+A Python Prisma client backed by SQLAlchemy — no Node.js or Rust at runtime.
 
-Prismaa reads your `schema.prisma` file and generates a fully-typed async/sync Python client backed by SQLAlchemy Core. Schema migrations are handled by the [official Prisma CLI](https://www.prisma.io/docs/orm/prisma-migrate/getting-started).
+Prismaa reads a standard `schema.prisma` file and generates a fully-typed async Python client. All queries run through SQLAlchemy Core — SQLite, PostgreSQL, and any other SQLAlchemy dialect work out of the box.
 
-## Quick start
+---
+
+## Install
 
 ```bash
 pip install prismaa
 ```
 
-Generate the client from your schema:
+For PostgreSQL:
 
 ```bash
-prismaa generate --schema schema.prisma
+pip install "prismaa[postgresql]"
 ```
 
-Use it:
+---
+
+## Quick start
+
+```bash
+# Generate the Python client from your schema
+prismaa generate --schema schema.prisma
+```
 
 ```python
 from prisma import Prisma
 
-async with Prisma(url="sqlite+aiosqlite:///./dev.db") as db:
-    user = await db.user.create(data={"name": "Alice", "email": "alice@example.com"})
-    users = await db.user.find_many(where={"email": {"contains": "@example.com"}})
+db = Prisma()
+await db.connect("sqlite+aiosqlite:///dev.db")
+
+user = await db.user.create(data={"email": "alice@example.com", "name": "Alice"})
+
+posts = await db.post.find_many(
+    where={"author": {"email": "alice@example.com"}, "published": True},
+    include={"author": True},
+    order={"createdAt": "desc"},
+)
+
+await db.disconnect()
 ```
+
+---
 
 ## Features
 
-- Pure Python — no Node.js or Rust required at runtime
-- Async (`asyncio`) and sync clients generated from the same schema
-- SQLAlchemy Core query layer — supports SQLite, PostgreSQL, and any other SQLAlchemy dialect
-- Fully typed: Pydantic v2 models, TypedDict inputs, typed relations
-- Prisma v7 schema compatibility
+- **Pure Python runtime** — no Node.js process, no Rust binary at query time
+- **Async-first** — every method is `async`; built for `asyncio`
+- **Fully typed** — Pydantic v2 models, TypedDict query inputs, typed relation attributes
+- **Prisma v7 schema** — standard schema format; official Prisma CLI handles migrations
+- **SQLAlchemy backend** — JOIN-based relation filtering, connection pooling, any dialect
+- **Rich query API** — filtering, ordering, pagination, `distinct`, `include`, `select`, transactions, raw queries, aggregations
+
+---
+
+## Why Prismaa?
+
+The original [prisma-client-py](https://github.com/RobertCraigie/prisma-client-py) is no longer maintained and requires a Rust query engine and a Node.js subprocess at every query. Prismaa replaces that runtime with a pure SQLAlchemy layer — the Prisma CLI is only needed during development for schema migrations, never at runtime.
+
+---
+
+## Next steps
+
+- [Getting Started](getting-started.md) — build a working app from scratch
+- [Prisma CLI Setup](prisma-setup.md) — one-time Node.js and migrations setup
+- [Schema Reference](schema-reference.md) — field types, relations, attributes
+- [API Reference](api/find-many.md) — all query methods

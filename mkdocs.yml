@@ -40,10 +40,12 @@ nav:
   - Schema Reference: schema-reference.md
   - API:
       - find_many: api/find-many.md
-      - find_unique: api/find-unique.md
-      - create: api/create.md
-      - update: api/update.md
-      - delete: api/delete.md
+      - find_unique / find_first: api/find-unique.md
+      - create / create_many: api/create.md
+      - update / upsert: api/update.md
+      - delete / delete_many: api/delete.md
+      - count / group_by: api/count-group-by.md
+      - Transactions & Raw Queries: api/transactions-raw.md
   - Contributing: contributing.md
 
 markdown_extensions:
