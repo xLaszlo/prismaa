@@ -90,6 +90,15 @@ class Prisma:
     async def disconnect(self) -> None:
         await self._conn.disconnect()
 
+    async def query_raw(self, sql: str, *args: Any, **kwargs: Any) -> list[dict[str, Any]]:
+        return await self._conn.query_raw(sql, *args, **kwargs)
+
+    async def execute_raw(self, sql: str, *args: Any, **kwargs: Any) -> int:
+        return await self._conn.execute_raw(sql, *args, **kwargs)
+
+    async def query_first(self, sql: str, *args: Any, **kwargs: Any) -> "dict[str, Any] | None":
+        return await self._conn.query_first(sql, *args, **kwargs)
+
     @asynccontextmanager
     async def tx(self) -> AsyncGenerator["_PrismaTransaction", None]:
         if self._conn._engine is None:

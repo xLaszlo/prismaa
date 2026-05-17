@@ -99,7 +99,9 @@ async def load_relations(
 
             stmt = select(related_table).where(related_table.c[their_col].in_(our_values))
             if sub_where:
-                stmt = stmt.where(build_where(related_table, sub_where, related_fcm))
+                stmt = stmt.where(
+                    build_where(related_table, sub_where, related_fcm, related_meta.relations, all_metadata)
+                )
             if sub_order:
                 orders: list[dict[str, str]] = [sub_order] if isinstance(sub_order, dict) else sub_order
                 for o in orders:

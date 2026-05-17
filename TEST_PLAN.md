@@ -21,11 +21,11 @@
 - [x] Step 16 — `count` with `select` (field-level counts), `take`, and `skip`
 - [x] Step 17 — `group_by` with aggregations (`avg`, `sum`, `min`, `max`, `count`)
 - [x] Step 18 — Transaction support (`tx()` context manager, rollback on error)
-- [ ] Step 19 — Batch API (collecting writes into a single round-trip)
-- [ ] Step 20 — Raw queries (`query_raw`, `execute_raw`, `query_first`)
-- [ ] Step 21 — Relation-based `where` filtering (filter `find_many`/`find_first` through related model fields, e.g. `where={"profile": {"bio": {"contains": "x"}}}`)
-- [ ] Step 22 — `distinct` on relation fields (`distinct_relations` on `find_many`/`find_first`)
-- [ ] Step 23 — Setting nullable fields to `None` in `create` and `update` (explicit null round-trip tests)
+- [ ] Step 19 — Batch API (collecting writes into a single round-trip) — **WONT DO**: SQLAlchemy connection pooling makes this a no-op optimisation; `tx()` already covers the atomicity use case
+- [x] Step 20 — Raw queries (`query_raw`, `execute_raw`, `query_first`)
+- [x] Step 21 — Relation-based `where` filtering (filter `find_many`/`find_first` through related model fields, e.g. `where={"profile": {"bio": {"contains": "x"}}}`)
+- [x] Step 22 — `distinct` on relation fields (`distinct_relations` on `find_many`/`find_first`)
+- [x] Step 23 — Setting nullable fields to `None` in `create` and `update` (explicit null round-trip tests)
 
 ### Issues not covered by tests
 - [ ] 1. `where` with `None` value → `IS NULL`

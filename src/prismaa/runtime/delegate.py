@@ -10,7 +10,7 @@ from .connection import AsyncConnectionManager
 from .errors import ForeignKeyViolationError, RecordNotFoundError, UniqueViolationError
 from .include import load_relations
 from .metadata import ModelMetadata
-from .where import build_where
+from .where import apply_where, build_where
 
 T = TypeVar("T")
 
@@ -284,7 +284,7 @@ class AsyncModelDelegate(Generic[T]):
             self._validate_select(select)
         stmt = select_sa(self._table)
         if where:
-            stmt = stmt.where(build_where(self._table, where, self._field_column_map))
+            stmt = apply_where(stmt, self._table, where, self._field_column_map, self._relations, self._all_metadata)
         if cursor:
             # Look up the cursor record to read sort-column values, then build a
             # proper OR-expanded keyset condition across all ORDER BY columns.
@@ -415,7 +415,11 @@ class AsyncModelDelegate(Generic[T]):
         data: dict[str, Any],
     ) -> int:
         vals = self._build_update_values(self._inject_updated_at(data))
-        stmt = update(self._table).where(build_where(self._table, where, self._field_column_map)).values(vals)
+        stmt = (
+            update(self._table)
+            .where(build_where(self._table, where, self._field_column_map, self._relations, self._all_metadata))
+            .values(vals)
+        )
         return await self._conn.execute_dml(stmt)
 
     async def delete(
@@ -439,7 +443,9 @@ class AsyncModelDelegate(Generic[T]):
     ) -> int:
         stmt = delete(self._table)
         if where:
-            stmt = stmt.where(build_where(self._table, where, self._field_column_map))
+            stmt = stmt.where(
+                build_where(self._table, where, self._field_column_map, self._relations, self._all_metadata)
+            )
         return await self._conn.execute_dml(stmt)
 
     async def upsert(
@@ -470,14 +476,18 @@ class AsyncModelDelegate(Generic[T]):
             ]
             stmt = select_sa(*cols).select_from(self._table)
             if where:
-                stmt = stmt.where(build_where(self._table, where, self._field_column_map))
+                stmt = stmt.where(
+                    build_where(self._table, where, self._field_column_map, self._relations, self._all_metadata)
+                )
             rows = await self._conn.execute(stmt)
             return dict(rows[0]) if rows else {f: 0 for f, v in select.items() if v}
 
         # Scalar count — optionally scoped to a take/skip window via subquery
         inner = select_sa(self._table)
         if where:
-            inner = inner.where(build_where(self._table, where, self._field_column_map))
+            inner = inner.where(
+                build_where(self._table, where, self._field_column_map, self._relations, self._all_metadata)
+            )
         if skip:
             inner = inner.offset(skip)
         if take is not None:
@@ -487,7 +497,9 @@ class AsyncModelDelegate(Generic[T]):
         else:
             stmt = select_sa(func.count().label("n")).select_from(self._table)
             if where:
-                stmt = stmt.where(build_where(self._table, where, self._field_column_map))
+                stmt = stmt.where(
+                    build_where(self._table, where, self._field_column_map, self._relations, self._all_metadata)
+                )
         rows = await self._conn.execute(stmt)
         return rows[0]["n"] if rows else 0
 
@@ -531,7 +543,9 @@ class AsyncModelDelegate(Generic[T]):
 
         stmt = select_sa(*select_exprs).select_from(self._table)
         if where:
-            stmt = stmt.where(build_where(self._table, where, self._field_column_map))
+            stmt = stmt.where(
+                build_where(self._table, where, self._field_column_map, self._relations, self._all_metadata)
+            )
         stmt = stmt.group_by(*group_cols)
         if order_by:
             orders = [order_by] if isinstance(order_by, dict) else order_by
