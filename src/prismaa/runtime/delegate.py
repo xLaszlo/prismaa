@@ -1,15 +1,16 @@
 from __future__ import annotations
 
 import datetime
-from typing import Any, Generic, Type, TypeVar
+from typing import Any, Generic, TypeVar
 
-from sqlalchemy import Table, and_, delete, func, insert, update
+from sqlalchemy import and_, delete, func, insert, or_, update
 from sqlalchemy import select as select_sa
 
 from .connection import AsyncConnectionManager
 from .errors import ForeignKeyViolationError, RecordNotFoundError, UniqueViolationError
 from .include import load_relations
-from .where import build_where
+from .metadata import ModelMetadata
+from .where import apply_where, build_where
 
 T = TypeVar("T")
 
@@ -18,29 +19,19 @@ class AsyncModelDelegate(Generic[T]):
     def __init__(
         self,
         *,
-        table: Table,
-        model_cls: Type[T],
-        field_column_map: dict[str, str],
-        relations: list[dict[str, Any]],
-        unique_fields: list[str],
-        updated_at_fields: list[str],
-        all_tables: dict[str, Table],
-        all_models: dict[str, Any],
-        all_field_column_maps: dict[str, dict[str, str]],
-        all_relations: dict[str, list[dict[str, Any]]],
+        model_name: str,
+        all_metadata: dict[str, ModelMetadata],
         conn: AsyncConnectionManager,
     ) -> None:
-        self._table = table
-        self._model_cls = model_cls
-        self._field_column_map = field_column_map
-        self._col_to_field_map = {v: k for k, v in field_column_map.items()}
-        self._relations = relations
-        self._unique_fields = unique_fields
-        self._updated_at_fields = updated_at_fields
-        self._all_tables = all_tables
-        self._all_models = all_models
-        self._all_field_column_maps = all_field_column_maps
-        self._all_relations = all_relations
+        meta = all_metadata[model_name]
+        self._table = meta.table
+        self._model_cls = meta.model_cls
+        self._field_column_map = meta.field_column_map
+        self._col_to_field_map = {v: k for k, v in meta.field_column_map.items()}
+        self._relations = meta.relations
+        self._unique_fields = meta.unique_fields
+        self._updated_at_fields = meta.updated_at_fields
+        self._all_metadata = all_metadata
         self._conn = conn
 
     # ------------------------------------------------------------------
@@ -78,11 +69,8 @@ class AsyncModelDelegate(Generic[T]):
                 rows,
                 include,
                 self._relations,
-                self._all_tables,
-                self._all_models,
+                self._all_metadata,
                 self._conn,
-                all_field_column_maps=self._all_field_column_maps,
-                all_relations=self._all_relations,
                 our_table=self._table,
             )
 
@@ -141,31 +129,26 @@ class AsyncModelDelegate(Generic[T]):
         """Resolve connect / disconnect / connectOrCreate on FK-side relations to scalar FK values."""
         result = dict(data)
         for rel in self._relations:
-            name = rel["name"]
-            fk_fields: list[str] = rel.get("fk_fields", [])
-            references: list[str] = rel.get("references", [])
-            if name not in result or not fk_fields:
+            if rel.name not in result or not rel.fk_fields:
                 continue
-            val = result.pop(name)
+            val = result.pop(rel.name)
             if not isinstance(val, dict):
                 continue
             if "connect" in val:
                 connect_where = val["connect"]
-                for fk_col, ref_field in zip(fk_fields, references, strict=True):
+                for fk_col, ref_field in zip(rel.fk_fields, rel.references, strict=True):
                     field_name = self._col_to_field_map.get(fk_col, fk_col)
                     result[field_name] = connect_where.get(ref_field)
             elif "disconnect" in val:
-                for fk_col in fk_fields:
-                    field_name = self._col_to_field_map.get(fk_col, fk_col)
-                    result[field_name] = None
+                for fk_col in rel.fk_fields:
+                    result[self._col_to_field_map.get(fk_col, fk_col)] = None
             elif "connectOrCreate" in val:
                 coc = val["connectOrCreate"]
                 where_data: dict[str, Any] = coc["where"]
                 create_data: dict[str, Any] = coc["create"]
-                related_model = rel["model"]
-                related_table = self._all_tables[related_model]
-                related_fcm = self._all_field_column_maps[related_model]
-                # Try to find the existing related record
+                related_meta = self._all_metadata[rel.model]
+                related_table = related_meta.table
+                related_fcm = related_meta.field_column_map
                 where_parts = [related_table.c[related_fcm.get(k, k)] == v for k, v in where_data.items()]
                 existing = await self._conn.execute(select_sa(related_table).where(and_(*where_parts)))
                 if existing:
@@ -180,9 +163,8 @@ class AsyncModelDelegate(Generic[T]):
                         insert(related_table).values(**clean).returning(related_table)
                     )
                     row = dict(new_rows[0])
-                for fk_col, ref_field in zip(fk_fields, references, strict=True):
-                    field_name = self._col_to_field_map.get(fk_col, fk_col)
-                    result[field_name] = row.get(ref_field)
+                for fk_col, ref_field in zip(rel.fk_fields, rel.references, strict=True):
+                    result[self._col_to_field_map.get(fk_col, fk_col)] = row.get(ref_field)
         return result
 
     @staticmethod
@@ -193,6 +175,26 @@ class AsyncModelDelegate(Generic[T]):
         if "UNIQUE" in msg:
             return UniqueViolationError(str(exc))
         return exc
+
+    @staticmethod
+    def _cursor_condition(sort_specs: list[tuple[Any, str, Any]]) -> Any:
+        """OR-expanded keyset condition for cursor pagination.
+
+        For each position i, require all prior columns to be equal and column i
+        to be strictly after (or equal for the last column) the cursor value.
+        This correctly handles mixed asc/desc sort directions.
+        """
+        clauses = []
+        for i, (col, direction, val) in enumerate(sort_specs):
+            eq_parts = [c == v for c, _, v in sort_specs[:i]]
+            is_last = i == len(sort_specs) - 1
+            cmp = (
+                (col >= val if direction == "asc" else col <= val)
+                if is_last
+                else (col > val if direction == "asc" else col < val)
+            )
+            clauses.append(and_(*eq_parts, cmp) if eq_parts else cmp)
+        return or_(*clauses) if len(clauses) > 1 else clauses[0]
 
     def _validate_unique_where(self, where: dict[str, Any]) -> None:
         if "__composite__" in self._unique_fields:
@@ -276,12 +278,28 @@ class AsyncModelDelegate(Generic[T]):
         skip: int | None = None,
         select: dict[str, bool] | None = None,
         distinct: list[str] | None = None,
+        cursor: dict[str, Any] | None = None,
     ) -> list[T]:
         if select:
             self._validate_select(select)
         stmt = select_sa(self._table)
         if where:
-            stmt = stmt.where(build_where(self._table, where, self._field_column_map))
+            stmt = apply_where(stmt, self._table, where, self._field_column_map, self._relations, self._all_metadata)
+        if cursor:
+            # Look up the cursor record to read sort-column values, then build a
+            # proper OR-expanded keyset condition across all ORDER BY columns.
+            cursor_rows = await self._conn.execute(select_sa(self._table).where(self._build_unique_where(cursor)))
+            if cursor_rows:
+                cursor_row = dict(cursor_rows[0])
+                orders_list = (
+                    ([order] if isinstance(order, dict) else order) if order else [{next(iter(cursor)): "asc"}]
+                )
+                sort_specs = [
+                    (self._table.c[self._field_column_map.get(f, f)], d, cursor_row[self._field_column_map.get(f, f)])
+                    for o in orders_list
+                    for f, d in o.items()
+                ]
+                stmt = stmt.where(self._cursor_condition(sort_specs))
         # PostgreSQL supports DISTINCT ON; prepend distinct cols to ORDER BY as required
         if distinct and self._conn.dialect_name == "postgresql":
             pg_cols = [self._table.c[self._field_column_map.get(f, f)] for f in distinct]
@@ -397,7 +415,11 @@ class AsyncModelDelegate(Generic[T]):
         data: dict[str, Any],
     ) -> int:
         vals = self._build_update_values(self._inject_updated_at(data))
-        stmt = update(self._table).where(build_where(self._table, where, self._field_column_map)).values(vals)
+        stmt = (
+            update(self._table)
+            .where(build_where(self._table, where, self._field_column_map, self._relations, self._all_metadata))
+            .values(vals)
+        )
         return await self._conn.execute_dml(stmt)
 
     async def delete(
@@ -421,7 +443,9 @@ class AsyncModelDelegate(Generic[T]):
     ) -> int:
         stmt = delete(self._table)
         if where:
-            stmt = stmt.where(build_where(self._table, where, self._field_column_map))
+            stmt = stmt.where(
+                build_where(self._table, where, self._field_column_map, self._relations, self._all_metadata)
+            )
         return await self._conn.execute_dml(stmt)
 
     async def upsert(
@@ -437,9 +461,118 @@ class AsyncModelDelegate(Generic[T]):
             return await self.create(data=create, include=include)
         return await self.update(where=where, data=update, include=include)
 
-    async def count(self, *, where: dict[str, Any] | None = None) -> int:
-        stmt = select_sa(func.count().label("n")).select_from(self._table)
+    async def count(
+        self,
+        *,
+        where: dict[str, Any] | None = None,
+        take: int | None = None,
+        skip: int | None = None,
+        select: dict[str, bool] | None = None,
+    ) -> "int | dict[str, int]":
+        if select:
+            # COUNT(col) counts non-null values per field
+            cols = [
+                func.count(self._table.c[self._field_column_map.get(f, f)]).label(f) for f, v in select.items() if v
+            ]
+            stmt = select_sa(*cols).select_from(self._table)
+            if where:
+                stmt = stmt.where(
+                    build_where(self._table, where, self._field_column_map, self._relations, self._all_metadata)
+                )
+            rows = await self._conn.execute(stmt)
+            return dict(rows[0]) if rows else {f: 0 for f, v in select.items() if v}
+
+        # Scalar count — optionally scoped to a take/skip window via subquery
+        inner = select_sa(self._table)
         if where:
-            stmt = stmt.where(build_where(self._table, where, self._field_column_map))
+            inner = inner.where(
+                build_where(self._table, where, self._field_column_map, self._relations, self._all_metadata)
+            )
+        if skip:
+            inner = inner.offset(skip)
+        if take is not None:
+            inner = inner.limit(take)
+        if take is not None or skip:
+            stmt = select_sa(func.count().label("n")).select_from(inner.subquery())
+        else:
+            stmt = select_sa(func.count().label("n")).select_from(self._table)
+            if where:
+                stmt = stmt.where(
+                    build_where(self._table, where, self._field_column_map, self._relations, self._all_metadata)
+                )
         rows = await self._conn.execute(stmt)
         return rows[0]["n"] if rows else 0
+
+    async def group_by(
+        self,
+        *,
+        by: list[str],
+        where: dict[str, Any] | None = None,
+        count: dict[str, bool] | bool | None = None,
+        avg: dict[str, bool] | None = None,
+        sum_: dict[str, bool] | None = None,
+        min_: dict[str, bool] | None = None,
+        max_: dict[str, bool] | None = None,
+        order_by: dict[str, str] | list[dict[str, str]] | None = None,
+        take: int | None = None,
+        skip: int | None = None,
+    ) -> list[dict[str, Any]]:
+        group_cols = [self._table.c[self._field_column_map.get(f, f)] for f in by]
+        select_exprs: list[Any] = list(group_cols)
+
+        if count is not None:
+            if count is True or (isinstance(count, dict) and count.get("_all")):
+                select_exprs.append(func.count().label("_count___all"))
+            if isinstance(count, dict):
+                for field, enabled in count.items():
+                    if enabled and field != "_all":
+                        col_name = self._field_column_map.get(field, field)
+                        select_exprs.append(func.count(self._table.c[col_name]).label(f"_count__{field}"))
+
+        for prefix, agg_dict, agg_fn in [
+            ("_avg", avg, func.avg),
+            ("_sum", sum_, func.sum),
+            ("_min", min_, func.min),
+            ("_max", max_, func.max),
+        ]:
+            if agg_dict:
+                for field, enabled in agg_dict.items():
+                    if enabled:
+                        col_name = self._field_column_map.get(field, field)
+                        select_exprs.append(agg_fn(self._table.c[col_name]).label(f"{prefix}__{field}"))
+
+        stmt = select_sa(*select_exprs).select_from(self._table)
+        if where:
+            stmt = stmt.where(
+                build_where(self._table, where, self._field_column_map, self._relations, self._all_metadata)
+            )
+        stmt = stmt.group_by(*group_cols)
+        if order_by:
+            orders = [order_by] if isinstance(order_by, dict) else order_by
+            for o in orders:
+                for field, direction in o.items():
+                    col_name = self._field_column_map.get(field, field)
+                    col = self._table.c[col_name]
+                    stmt = stmt.order_by(col.asc() if direction == "asc" else col.desc())
+        if skip:
+            stmt = stmt.offset(skip)
+        if take is not None:
+            stmt = stmt.limit(take)
+
+        rows = await self._conn.execute(stmt)
+
+        results = []
+        for row in rows:
+            row_dict = dict(row)
+            result: dict[str, Any] = {}
+            for field in by:
+                col_name = self._field_column_map.get(field, field)
+                result[field] = row_dict.get(col_name)
+            for key, value in row_dict.items():
+                if "__" not in key:
+                    continue
+                agg_prefix, _, agg_field = key.partition("__")
+                bucket = result.setdefault(agg_prefix, {})
+                bucket[agg_field] = value
+            results.append(result)
+        return results

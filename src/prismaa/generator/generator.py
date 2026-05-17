@@ -124,6 +124,7 @@ def _make_env(schema: Schema | None = None) -> Environment:
     env.filters["resolve_col_names"] = _resolve_col_names
     env.filters["lower"] = _lower
     env.filters["tojson"] = _tojson
+    env.filters["bool_lower"] = _bool_lower
 
     _model_map: dict[str, Model] = {m.name: m for m in schema.models} if schema else {}
 
