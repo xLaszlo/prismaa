@@ -6,6 +6,7 @@ from sqlalchemy import Table, select
 
 from .connection import AsyncConnectionManager
 from .metadata import ModelMetadata, RelationMeta
+from .where import build_where
 
 
 async def load_relations(
@@ -25,7 +26,18 @@ async def load_relations(
         if not include_val:
             continue
 
-        nested_include = include_val.get("include") if isinstance(include_val, dict) else None
+        nested_include: dict[str, Any] | None = None
+        sub_where: dict[str, Any] | None = None
+        sub_take: int | None = None
+        sub_skip: int | None = None
+        sub_order: dict[str, str] | list[dict[str, str]] | None = None
+
+        if isinstance(include_val, dict):
+            nested_include = include_val.get("include")
+            sub_where = include_val.get("where")
+            sub_take = include_val.get("take")
+            sub_skip = include_val.get("skip")
+            sub_order = include_val.get("orderBy")
 
         related_meta = all_metadata.get(rel.model)
         if related_meta is None:
@@ -33,7 +45,8 @@ async def load_relations(
 
         related_table = related_meta.table
         related_model_cls = related_meta.model_cls
-        rel_col_to_field = {v: k for k, v in related_meta.field_column_map.items()}
+        related_fcm = related_meta.field_column_map
+        rel_col_to_field = {v: k for k, v in related_fcm.items()}
 
         def _make_related(
             rd: dict[str, Any],
@@ -44,7 +57,7 @@ async def load_relations(
             return _cls(**mapped)
 
         if rel.fk_fields:
-            # This side holds the FK.
+            # This side holds the FK — at most one related record per row.
             fk_col = rel.references[0]
             local_col = rel.fk_fields[0]
             local_values = [r[local_col] for r in rows if r.get(local_col) is not None]
@@ -85,6 +98,15 @@ async def load_relations(
                 continue
 
             stmt = select(related_table).where(related_table.c[their_col].in_(our_values))
+            if sub_where:
+                stmt = stmt.where(build_where(related_table, sub_where, related_fcm))
+            if sub_order:
+                orders: list[dict[str, str]] = [sub_order] if isinstance(sub_order, dict) else sub_order
+                for o in orders:
+                    for field_name, direction in o.items():
+                        col_name = related_fcm.get(field_name, field_name)
+                        col = related_table.c[col_name]
+                        stmt = stmt.order_by(col.asc() if direction == "asc" else col.desc())
 
             if rel.is_list:
                 index_list: dict[Any, list[dict[str, Any]]] = {v: [] for v in our_values}
@@ -93,6 +115,16 @@ async def load_relations(
                     key = rd[their_col]
                     if key in index_list:
                         index_list[key].append(rd)
+
+                # take/skip apply per-parent at the Python level
+                if sub_skip is not None or sub_take is not None:
+                    for k in index_list:
+                        lst = index_list[k]
+                        if sub_skip:
+                            lst = lst[sub_skip:]
+                        if sub_take is not None:
+                            lst = lst[:sub_take]
+                        index_list[k] = lst
 
                 if nested_include:
                     all_related_dicts = [d for lst in index_list.values() for d in lst]

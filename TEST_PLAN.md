@@ -16,11 +16,11 @@
 - [x] Step 11 — `find_unique_or_raise` / `find_first_or_raise`
 - [x] Step 12 — Atomic updates (`increment`, `decrement`, `multiply`, `divide` on numeric fields)
 - [x] Step 13 — Nested writes (`connect`, `disconnect`, `connectOrCreate` in `create` / `update`)
-- [ ] Step 14 — `include` with sub-filters (`where`, `take`, `skip`, `orderBy` inside include)
-- [ ] Step 15 — Cursor-based pagination (`cursor` on `find_many`)
-- [ ] Step 16 — `count` with `select` (field-level counts), `take`, and `skip`
-- [ ] Step 17 — `group_by` with aggregations (`avg`, `sum`, `min`, `max`, `count`)
-- [ ] Step 18 — Transaction support (`tx()` context manager, rollback on error)
+- [x] Step 14 — `include` with sub-filters (`where`, `take`, `skip`, `orderBy` inside include)
+- [x] Step 15 — Cursor-based pagination (`cursor` on `find_many`)
+- [x] Step 16 — `count` with `select` (field-level counts), `take`, and `skip`
+- [x] Step 17 — `group_by` with aggregations (`avg`, `sum`, `min`, `max`, `count`)
+- [x] Step 18 — Transaction support (`tx()` context manager, rollback on error)
 - [ ] Step 19 — Batch API (collecting writes into a single round-trip)
 - [ ] Step 20 — Raw queries (`query_raw`, `execute_raw`, `query_first`)
 - [ ] Step 21 — Relation-based `where` filtering (filter `find_many`/`find_first` through related model fields, e.g. `where={"profile": {"bio": {"contains": "x"}}}`)

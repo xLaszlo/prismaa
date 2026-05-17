@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, Sequence
 
 from sqlalchemy import CursorResult, TextClause, event
-from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine, create_async_engine
 from sqlalchemy.sql import ClauseElement
 
 
@@ -59,3 +59,32 @@ class AsyncConnectionManager:
 
     async def __aexit__(self, *_: Any) -> None:
         await self.disconnect()
+
+
+class TransactionConnectionManager:
+    """Wraps a single open AsyncConnection for use within an explicit transaction.
+
+    SQLAlchemy's engine.begin() handles commit/rollback automatically, so this
+    class just forwards operations to the shared connection without lifecycle methods.
+    """
+
+    def __init__(self, conn: AsyncConnection) -> None:
+        self._conn = conn
+
+    @property
+    def dialect_name(self) -> str:
+        return self._conn.dialect.name
+
+    async def execute(self, stmt: ClauseElement | TextClause) -> Sequence[Any]:
+        result: CursorResult = await self._conn.execute(stmt)
+        return result.mappings().all()
+
+    async def execute_write(self, stmt: ClauseElement) -> Sequence[Any]:
+        result: CursorResult = await self._conn.execute(stmt)
+        return result.mappings().all() if result.returns_rows else []
+
+    async def execute_dml(self, stmt: ClauseElement, data: Any = None) -> int:
+        result: CursorResult = (
+            await self._conn.execute(stmt, data) if data is not None else await self._conn.execute(stmt)
+        )
+        return result.rowcount
