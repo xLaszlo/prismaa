@@ -32,7 +32,7 @@ user = await db.user.find_unique(
 Same as `find_unique` but raises `RecordNotFoundError` instead of returning `None`:
 
 ```python
-from prismaa.errors import RecordNotFoundError
+from aprisma.errors import RecordNotFoundError
 
 try:
     user = await db.user.find_unique_or_raise(where={"id": 999})

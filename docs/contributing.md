@@ -1,6 +1,6 @@
 # Contributing
 
-Found a bug or have a feature idea? Please open an issue on [GitHub Issues](https://github.com/xLaszlo/prismaa/issues).
+Found a bug or have a feature idea? Please open an issue on [GitHub Issues](https://github.com/xLaszlo/aprisma/issues).
 
 When reporting a bug, include a **minimal reproducible example**:
 

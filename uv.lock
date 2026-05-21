@@ -21,6 +21,58 @@ wheels = [
 ]
 
 [[package]]
+name = "aprisma"
+version = "0.1.4"
+source = { editable = "." }
+dependencies = [
+    { name = "aiosqlite" },
+    { name = "click" },
+    { name = "jinja2" },
+    { name = "pydantic" },
+    { name = "sqlalchemy", extra = ["asyncio"] },
+]
+
+[package.optional-dependencies]
+postgresql = [
+    { name = "asyncpg" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "asyncpg" },
+    { name = "mkdocs-material" },
+    { name = "mkdocstrings", extra = ["python"] },
+    { name = "pre-commit" },
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+    { name = "pytest-cov" },
+    { name = "ruff" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "aiosqlite", specifier = ">=0.19" },
+    { name = "asyncpg", marker = "extra == 'postgresql'", specifier = ">=0.29" },
+    { name = "click", specifier = ">=8.0" },
+    { name = "jinja2", specifier = ">=3.1" },
+    { name = "pydantic", specifier = ">=2.0" },
+    { name = "sqlalchemy", extras = ["asyncio"], specifier = ">=2.0" },
+]
+provides-extras = ["postgresql"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "asyncpg", specifier = ">=0.29" },
+    { name = "mkdocs-material", specifier = ">=9.0" },
+    { name = "mkdocstrings", extras = ["python"], specifier = ">=0.25" },
+    { name = "pre-commit", specifier = ">=3.0" },
+    { name = "pytest", specifier = ">=8.0" },
+    { name = "pytest-asyncio", specifier = ">=0.23" },
+    { name = "pytest-cov", specifier = ">=5.0" },
+    { name = "ruff", specifier = ">=0.6" },
+]
+
+[[package]]
 name = "asyncpg"
 version = "0.31.0"
 source = { registry = "https://pypi.org/simple" }
@@ -737,58 +789,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/8e/22/2de9408ac81acbb8a7d05d4cc064a152ccf33b3d480ebe0cd292153db239/pre_commit-4.6.0.tar.gz", hash = "sha256:718d2208cef53fdc38206e40524a6d4d9576d103eb16f0fec11c875e7716e9d9", size = 198525 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/80/6e/4b28b62ecb6aae56769c34a8ff1d661473ec1e9519e2d5f8b2c150086b26/pre_commit-4.6.0-py2.py3-none-any.whl", hash = "sha256:e2cf246f7299edcabcf15f9b0571fdce06058527f0a06535068a86d38089f29b", size = 226472 },
-]
-
-[[package]]
-name = "prismaa"
-version = "0.1.4"
-source = { editable = "." }
-dependencies = [
-    { name = "aiosqlite" },
-    { name = "click" },
-    { name = "jinja2" },
-    { name = "pydantic" },
-    { name = "sqlalchemy", extra = ["asyncio"] },
-]
-
-[package.optional-dependencies]
-postgresql = [
-    { name = "asyncpg" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "asyncpg" },
-    { name = "mkdocs-material" },
-    { name = "mkdocstrings", extra = ["python"] },
-    { name = "pre-commit" },
-    { name = "pytest" },
-    { name = "pytest-asyncio" },
-    { name = "pytest-cov" },
-    { name = "ruff" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "aiosqlite", specifier = ">=0.19" },
-    { name = "asyncpg", marker = "extra == 'postgresql'", specifier = ">=0.29" },
-    { name = "click", specifier = ">=8.0" },
-    { name = "jinja2", specifier = ">=3.1" },
-    { name = "pydantic", specifier = ">=2.0" },
-    { name = "sqlalchemy", extras = ["asyncio"], specifier = ">=2.0" },
-]
-provides-extras = ["postgresql"]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "asyncpg", specifier = ">=0.29" },
-    { name = "mkdocs-material", specifier = ">=9.0" },
-    { name = "mkdocstrings", extras = ["python"], specifier = ">=0.25" },
-    { name = "pre-commit", specifier = ">=3.0" },
-    { name = "pytest", specifier = ">=8.0" },
-    { name = "pytest-asyncio", specifier = ">=0.23" },
-    { name = "pytest-cov", specifier = ">=5.0" },
-    { name = "ruff", specifier = ">=0.6" },
 ]
 
 [[package]]

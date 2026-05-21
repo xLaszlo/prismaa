@@ -4,13 +4,13 @@ from pathlib import Path
 
 import click
 
-from prismaa.generator.generator import generate
-from prismaa.parser import parse
+from aprisma.generator.generator import generate
+from aprisma.parser import parse
 
 
 @click.group()
 def main() -> None:
-    """Prismaa — Python Prisma client generator."""
+    """Aprisma — Python Prisma client generator."""
 
 
 @main.command()

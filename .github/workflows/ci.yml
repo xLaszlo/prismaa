@@ -45,10 +45,10 @@ jobs:
         run: uv sync --locked --group dev
 
       - name: Generate test client
-        run: uv run --locked prismaa generate --schema tests/fixtures/schema.prisma --output tests/prisma
+        run: uv run --locked aprisma generate --schema tests/fixtures/schema.prisma --output tests/prisma
 
       - name: Run tests
-        run: uv run --locked pytest --cov=prismaa --cov-report=xml
+        run: uv run --locked pytest --cov=aprisma --cov-report=xml
 
       - name: Upload coverage
         if: matrix.python-version == '3.13'
@@ -64,9 +64,9 @@ jobs:
       postgres:
         image: postgres:16
         env:
-          POSTGRES_USER: prismaa
-          POSTGRES_PASSWORD: prismaa
-          POSTGRES_DB: prismaa_test
+          POSTGRES_USER: aprisma
+          POSTGRES_PASSWORD: aprisma
+          POSTGRES_DB: aprisma_test
         ports:
           - 5432:5432
         options: >-
@@ -75,7 +75,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     env:
-      TEST_DATABASE_URL: postgresql+asyncpg://prismaa:prismaa@localhost:5432/prismaa_test
+      TEST_DATABASE_URL: postgresql+asyncpg://aprisma:aprisma@localhost:5432/aprisma_test
     steps:
       - uses: actions/checkout@v6
 
@@ -97,7 +97,7 @@ jobs:
         run: uv sync --locked --group dev
 
       - name: Generate test client
-        run: uv run --locked prismaa generate --schema tests/fixtures/schema.prisma --output tests/prisma
+        run: uv run --locked aprisma generate --schema tests/fixtures/schema.prisma --output tests/prisma
 
       - name: Run tests against PostgreSQL
         run: uv run --locked pytest tests/integration/ -v

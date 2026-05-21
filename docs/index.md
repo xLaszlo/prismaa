@@ -1,21 +1,21 @@
-# Prismaa
+# Aprisma
 
 A Python Prisma client backed by SQLAlchemy — no Node.js or Rust at runtime.
 
-Prismaa reads a standard `schema.prisma` file and generates a fully-typed async Python client. All queries run through SQLAlchemy Core — SQLite, PostgreSQL, and any other SQLAlchemy dialect work out of the box.
+Aprisma reads a standard `schema.prisma` file and generates a fully-typed async Python client. All queries run through SQLAlchemy Core — SQLite, PostgreSQL, and any other SQLAlchemy dialect work out of the box.
 
 ---
 
 ## Install
 
 ```bash
-pip install prismaa
+pip install aprisma
 ```
 
 For PostgreSQL:
 
 ```bash
-pip install "prismaa[postgresql]"
+pip install "aprisma[postgresql]"
 ```
 
 ---
@@ -24,7 +24,7 @@ pip install "prismaa[postgresql]"
 
 ```bash
 # Generate the Python client from your schema
-prismaa generate --schema schema.prisma
+aprisma generate --schema schema.prisma
 ```
 
 ```python
@@ -57,9 +57,9 @@ await db.disconnect()
 
 ---
 
-## Why Prismaa?
+## Why Aprisma?
 
-The original [prisma-client-py](https://github.com/RobertCraigie/prisma-client-py) is no longer maintained and requires a Rust query engine and a Node.js subprocess at every query. Prismaa replaces that runtime with a pure SQLAlchemy layer — the Prisma CLI is only needed during development for schema migrations, never at runtime.
+The original [prisma-client-py](https://github.com/RobertCraigie/prisma-client-py) is no longer maintained and requires a Rust query engine and a Node.js subprocess at every query. Aprisma replaces that runtime with a pure SQLAlchemy layer — the Prisma CLI is only needed during development for schema migrations, never at runtime.
 
 ---
 

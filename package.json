@@ -1,5 +1,5 @@
 {
-  "name": "prismaa-dev",
+  "name": "aprisma-dev",
   "private": true,
   "description": "Prisma CLI for test database setup — not part of the Python package.",
   "devDependencies": {

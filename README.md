@@ -1,8 +1,8 @@
-# Prismaa
+# Aprisma
 
 **A Python Prisma client backed by SQLAlchemy — no Node.js or Rust at runtime.**
 
-Prismaa reads a standard `schema.prisma` file and generates a fully-typed async Python client. All queries run through [SQLAlchemy Core](https://docs.sqlalchemy.org/en/20/core/) — SQLite, PostgreSQL, and any other SQLAlchemy dialect work out of the box.
+Aprisma reads a standard `schema.prisma` file and generates a fully-typed async Python client. All queries run through [SQLAlchemy Core](https://docs.sqlalchemy.org/en/20/core/) — SQLite, PostgreSQL, and any other SQLAlchemy dialect work out of the box.
 
 ```python
 db = Prisma()
@@ -21,11 +21,11 @@ await db.disconnect()
 
 ---
 
-## Why Prismaa?
+## Why Aprisma?
 
-The original [prisma-client-py](https://github.com/RobertCraigie/prisma-client-py) is no longer maintained and requires a Rust query engine and a Node.js subprocess at **every query**. Prismaa replaces that with a pure-Python SQLAlchemy layer — the Prisma CLI is only used during development to manage migrations, never at runtime.
+The original [prisma-client-py](https://github.com/RobertCraigie/prisma-client-py) is no longer maintained and requires a Rust query engine and a Node.js subprocess at **every query**. Aprisma replaces that with a pure-Python SQLAlchemy layer — the Prisma CLI is only used during development to manage migrations, never at runtime.
 
-| | prisma-client-py | **Prismaa** |
+| | prisma-client-py | **Aprisma** |
 |---|---|---|
 | Runtime dependency | Rust engine + Node.js | None |
 | Query layer | Prisma Query Engine | SQLAlchemy Core |
@@ -49,16 +49,16 @@ The original [prisma-client-py](https://github.com/RobertCraigie/prisma-client-p
 ## Installation
 
 ```bash
-pip install prismaa
+pip install aprisma
 ```
 
 For PostgreSQL:
 
 ```bash
-pip install "prismaa[postgresql]"
+pip install "aprisma[postgresql]"
 ```
 
-> Prismaa uses the Prisma CLI (a Node.js tool) for schema migrations. It is only needed during development — see [Prisma CLI Setup](https://xlaszlo.github.io/prismaa/prisma-setup/) for a one-time setup guide.
+> Aprisma uses the Prisma CLI (a Node.js tool) for schema migrations. It is only needed during development — see [Prisma CLI Setup](https://xlaszlo.github.io/aprisma/prisma-setup/) for a one-time setup guide.
 
 ---
 
@@ -70,7 +70,7 @@ pip install "prismaa[postgresql]"
 # schema.prisma
 
 generator client {
-  provider  = "prismaa"
+  provider  = "aprisma"
   output    = "./prisma"
   interface = "asyncio"
 }
@@ -103,7 +103,7 @@ model Post {
 npx prisma db push --url "file:./dev.db"
 
 # Generate the Python client
-prismaa generate --schema schema.prisma
+aprisma generate --schema schema.prisma
 ```
 
 ### 3. Use it
@@ -160,17 +160,17 @@ asyncio.run(main())
 | Database | Driver | Install |
 |---|---|---|
 | SQLite | `aiosqlite` | included |
-| PostgreSQL | `asyncpg` | `pip install "prismaa[postgresql]"` |
+| PostgreSQL | `asyncpg` | `pip install "aprisma[postgresql]"` |
 | Any SQLAlchemy dialect | bring your own | pass the URL to `connect()` |
 
 ---
 
 ## Documentation
 
-Full documentation: **[xlaszlo.github.io/prismaa](https://xlaszlo.github.io/prismaa)**
+Full documentation: **[xlaszlo.github.io/aprisma](https://xlaszlo.github.io/aprisma)**
 
 ---
 
 ## Contributing
 
-Found a bug or have a feature idea? Please open an issue on [GitHub Issues](https://github.com/xLaszlo/prismaa/issues) with a minimal reproducible description of the problem or feature. **Please do not open pull requests** — a clear issue description is more useful than a PR without prior discussion.
+Found a bug or have a feature idea? Please open an issue on [GitHub Issues](https://github.com/xLaszlo/aprisma/issues) with a minimal reproducible description of the problem or feature. **Please do not open pull requests** — a clear issue description is more useful than a PR without prior discussion.
