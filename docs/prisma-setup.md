@@ -1,6 +1,6 @@
 # Setting up Prisma CLI in a Python project
 
-Prismaa handles all Python-side database access, but **schema migrations are managed by the official Prisma CLI** (a Node.js tool). This guide walks through adding the Prisma CLI to a Python project from scratch.
+Aprisma handles all Python-side database access, but **schema migrations are managed by the official Prisma CLI** (a Node.js tool). This guide walks through adding the Prisma CLI to a Python project from scratch.
 
 You do not need to know JavaScript or Node.js beyond running the commands below.
 
@@ -135,7 +135,7 @@ Create `schema.prisma` (the `url` property is no longer in the datasource block 
 
 ```prisma
 generator client {
-  provider = "prismaa"
+  provider = "aprisma"
   output   = "./prisma"
   interface = "asyncio"
 }

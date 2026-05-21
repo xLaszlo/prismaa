@@ -1,5 +1,5 @@
 generator client {
-  provider                    = "prismaa"
+  provider                    = "aprisma"
   output                      = "../prisma"
   interface                   = "asyncio"
   recursive_type_depth        = "5"
@@ -116,7 +116,7 @@ model Asset {
   createdAt DateTime @default(now())
 }
 
-/// Internal full-text search index — not managed by Prismaa.
+/// Internal full-text search index — not managed by Aprisma.
 model FtsIndex {
   rowid   Int?
   content String?

@@ -1,28 +1,28 @@
 import unittest
 from pathlib import Path
 
-from prismaa.parser import parse
-from prismaa.parser.ast import FunctionCall
+from aprisma.parser import parse
+from aprisma.parser.ast import FunctionCall
 
 EXAMPLE_SCHEMA = (Path(__file__).parent.parent / "fixtures" / "schema.prisma").read_text()
 
 
 class TestGeneratorBlock(unittest.TestCase):
     def test_name(self):
-        schema = parse('generator client { provider = "prismaa" }')
+        schema = parse('generator client { provider = "aprisma" }')
         self.assertIsNotNone(schema.generator)
         self.assertEqual(schema.generator.name, "client")
 
     def test_properties(self):
         src = """
         generator client {
-          provider  = "prismaa"
+          provider  = "aprisma"
           interface = "asyncio"
           output    = "../prisma"
         }
         """
         g = parse(src).generator
-        self.assertEqual(g.get("provider"), "prismaa")
+        self.assertEqual(g.get("provider"), "aprisma")
         self.assertEqual(g.get("interface"), "asyncio")
         self.assertEqual(g.get("output"), "../prisma")
 

@@ -1,6 +1,6 @@
 """Integration tests for error types and constraint violations."""
 
-from prismaa.runtime.errors import (
+from aprisma.runtime.errors import (
     ForeignKeyViolationError,
     PrismaError,
     RecordNotFoundError,

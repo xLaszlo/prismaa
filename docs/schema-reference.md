@@ -1,6 +1,6 @@
 # Schema Reference
 
-Prismaa uses the standard [Prisma schema language](https://www.prisma.io/docs/concepts/components/prisma-schema). This page covers the features Prismaa supports and any Prismaa-specific generator options.
+Aprisma uses the standard [Prisma schema language](https://www.prisma.io/docs/concepts/components/prisma-schema). This page covers the features Aprisma supports and any Aprisma-specific generator options.
 
 ---
 
@@ -8,7 +8,7 @@ Prismaa uses the standard [Prisma schema language](https://www.prisma.io/docs/co
 
 ```prisma
 generator client {
-  provider  = "prismaa"
+  provider  = "aprisma"
   output    = "./prisma"      # where to write the generated client
   interface = "asyncio"       # only asyncio is supported
 }
@@ -16,7 +16,7 @@ generator client {
 
 | Option | Values | Description |
 |---|---|---|
-| `provider` | `"prismaa"` | Required — selects the Prismaa generator |
+| `provider` | `"aprisma"` | Required — selects the Aprisma generator |
 | `output` | path | Directory for the generated `client.py` |
 | `interface` | `"asyncio"` | Client interface style |
 

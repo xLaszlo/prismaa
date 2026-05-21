@@ -1,6 +1,6 @@
 import unittest
 
-from prismaa.parser.lexer import LexError, Token, TokenKind, tokenize
+from aprisma.parser.lexer import LexError, Token, TokenKind, tokenize
 
 
 def kinds(source: str) -> list[TokenKind]:

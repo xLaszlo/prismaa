@@ -2,7 +2,7 @@
 
 import asyncio
 
-from prismaa.runtime.errors import RecordNotFoundError
+from aprisma.runtime.errors import RecordNotFoundError
 
 from .prisma_test_case import PrismaTestCase
 

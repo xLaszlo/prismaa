@@ -1,6 +1,6 @@
 """Tests for transaction support: tx() context manager, commit, and rollback."""
 
-from prismaa.runtime.errors import UniqueViolationError
+from aprisma.runtime.errors import UniqueViolationError
 
 from .prisma_test_case import PrismaTestCase
 

@@ -6,7 +6,7 @@ from typing import Any
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
-from prismaa.parser.ast import Attribute, Field, Model, Schema
+from aprisma.parser.ast import Attribute, Field, Model, Schema
 
 _TEMPLATES_DIR = Path(__file__).parent / "templates"
 

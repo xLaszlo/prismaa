@@ -1,5 +1,5 @@
 [project]
-name = "prismaa"
+name = "aprisma"
 version = "0.1.4"
 description = "A production-grade Python Prisma client"
 readme = "README.md"
@@ -27,13 +27,13 @@ dependencies = [
 ]
 
 [project.scripts]
-prismaa = "prismaa.cli:main"
+aprisma = "aprisma.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/xLaszlo/prismaa"
-Documentation = "https://xLaszlo.github.io/prismaa"
-Repository = "https://github.com/xLaszlo/prismaa"
-Issues = "https://github.com/xLaszlo/prismaa/issues"
+Homepage = "https://github.com/xLaszlo/aprisma"
+Documentation = "https://xLaszlo.github.io/aprisma"
+Repository = "https://github.com/xLaszlo/aprisma"
+Issues = "https://github.com/xLaszlo/aprisma/issues"
 
 [project.optional-dependencies]
 postgresql = ["asyncpg>=0.29"]
@@ -51,7 +51,7 @@ dev = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/prismaa"]
+packages = ["src/aprisma"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
@@ -59,7 +59,7 @@ testpaths = ["tests"]
 pythonpath = ["tests"]
 
 [tool.coverage.run]
-source = ["prismaa"]
+source = ["aprisma"]
 branch = true
 
 [tool.coverage.report]
@@ -94,7 +94,7 @@ order-by-type = true
 relative-imports-order = "closest-to-furthest"
 extra-standard-library = ["typing"]
 section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
-known-first-party = ["prismaa"]
+known-first-party = ["aprisma"]
 
 [build-system]
 requires = ["hatchling"]

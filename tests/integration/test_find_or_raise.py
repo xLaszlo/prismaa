@@ -1,6 +1,6 @@
 """Tests for find_unique_or_raise and find_first_or_raise."""
 
-from prismaa.runtime.errors import RecordNotFoundError
+from aprisma.runtime.errors import RecordNotFoundError
 
 from .prisma_test_case import PrismaTestCase
 

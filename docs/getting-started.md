@@ -1,6 +1,6 @@
 # Getting Started
 
-This guide walks through building a small blog application with Prismaa from scratch — from installation to running queries.
+This guide walks through building a small blog application with Aprisma from scratch — from installation to running queries.
 
 ---
 
@@ -11,16 +11,16 @@ This guide walks through building a small blog application with Prismaa from scr
 
 ---
 
-## 1. Install Prismaa
+## 1. Install Aprisma
 
 ```bash
-pip install prismaa
+pip install aprisma
 ```
 
 For PostgreSQL, add the driver:
 
 ```bash
-pip install "prismaa[postgresql]"
+pip install "aprisma[postgresql]"
 ```
 
 ---
@@ -31,7 +31,7 @@ Create `schema.prisma` in your project root:
 
 ```prisma
 generator client {
-  provider  = "prismaa"
+  provider  = "aprisma"
   output    = "./prisma"
   interface = "asyncio"
 }
@@ -59,7 +59,7 @@ model Post {
 }
 ```
 
-The `generator` block tells Prismaa to generate the client into the `./prisma` directory. The `datasource` block sets the database engine — no connection URL is needed here (it is passed at runtime).
+The `generator` block tells Aprisma to generate the client into the `./prisma` directory. The `datasource` block sets the database engine — no connection URL is needed here (it is passed at runtime).
 
 ---
 
@@ -84,7 +84,7 @@ See the [Prisma CLI Setup](prisma-setup.md) guide for how migrations work.
 ## 4. Generate the Python client
 
 ```bash
-prismaa generate --schema schema.prisma
+aprisma generate --schema schema.prisma
 ```
 
 This creates `./prisma/__init__.py` and `./prisma/client.py`. The generated `Prisma` class is what you import in your application.

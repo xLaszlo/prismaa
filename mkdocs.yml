@@ -1,7 +1,7 @@
-site_name: Prismaa
+site_name: Aprisma
 site_description: A production-grade Python Prisma client — no Node.js, no Rust binary.
-repo_url: https://github.com/xLaszlo/prismaa
-repo_name: xLaszlo/prismaa
+repo_url: https://github.com/xLaszlo/aprisma
+repo_name: xLaszlo/aprisma
 
 theme:
   name: material
